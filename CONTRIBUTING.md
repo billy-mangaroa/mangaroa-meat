@@ -3,8 +3,8 @@
 ## Quick Start
 
 ```bash
-# 1. Fork the repo on GitHub, then clone your fork
-git clone git@github.com:YOUR-USERNAME/mangaroa-meat.git
+# 1. Clone the repo (you've been added as a collaborator)
+git clone https://github.com/billy-mangaroa/mangaroa-meat.git
 cd mangaroa-meat
 
 # 2. Install dependencies
@@ -52,38 +52,59 @@ This site uses **Tailwind CSS 4**. Edit classes directly in the component files.
 
 ## How to Submit Changes
 
-### Option A: Branch + Pull Request (preferred)
+### The Workflow
+
+There are two branches that matter:
+
+| Branch | Site | Who can merge |
+|--------|------|---------------|
+| `staging` | staging.meat.mangaroa.org | You push directly |
+| `main` | meat.mangaroa.org (production) | Billy approves via PR |
+
+### Step 1: Work on staging
 
 ```bash
-# Create a branch for your work
-git checkout -b my-changes
+# Start from the staging branch
+git checkout staging
+git pull origin staging
 
 # Make your edits...
 
-# Commit
+# Commit and push
 git add -A
 git commit -m "Update homepage copy"
-
-# Push your branch
-git push origin my-changes
+git push origin staging
 ```
 
-Then go to GitHub and open a **Pull Request** from your branch to `main`. Billy will review and merge it.
+This automatically deploys to **staging.meat.mangaroa.org** where you can preview your changes live.
+
+### Step 2: When you're happy, open a PR to production
+
+1. Go to https://github.com/billy-mangaroa/mangaroa-meat
+2. Click "Pull requests" → "New pull request"
+3. Set **base: main** ← **compare: staging**
+4. Click "Create pull request"
+5. Add a short description of what you changed
+6. Billy will review and merge → goes live on meat.mangaroa.org
 
 ### Option B: Edit on GitHub directly
 
 1. Go to https://github.com/billy-mangaroa/mangaroa-meat
-2. Navigate to the file you want to edit
-3. Click the pencil icon (edit)
-4. Make your changes
-5. Click "Commit changes" → choose "Create a new branch" → "Propose changes"
-6. This automatically opens a Pull Request
+2. Switch to the `staging` branch (dropdown at top-left)
+3. Navigate to the file you want to edit
+4. Click the pencil icon (edit)
+5. Commit directly to `staging`
+6. Check staging.meat.mangaroa.org to preview
+7. Open a PR from `staging` → `main` when ready
 
 ## Deployment
 
-The site deploys automatically to **meat.mangaroa.org** when changes are merged to `main`. You don't need to do anything — just get your PR merged and it goes live.
+| What happens | Where it deploys |
+|-------------|-----------------|
+| Push to `staging` | staging.meat.mangaroa.org (preview) |
+| PR merged to `main` | meat.mangaroa.org (production) |
 
-Preview deployments are generated for every PR so you can check your changes before they go live.
+You can push to `staging` as many times as you want. Production only updates when Billy approves and merges your PR.
 
 ## Environment Variables
 
