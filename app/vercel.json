@@ -1,0 +1,5 @@
+{
+  "rewrites": [
+    { "source": "/discount/:code", "destination": "/?discount=:code" }
+  ]
+}

@@ -1,0 +1,84 @@
+---
+import Layout from './Layout.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import BreadcrumbSchema from '../components/schema/BreadcrumbSchema.astro';
+import type { CollectionEntry } from 'astro:content';
+
+interface Props {
+  entry: CollectionEntry<'blog'>;
+}
+
+const { entry } = Astro.props;
+const { title, description, pubDate, updatedDate, hero, heroAlt, author, draft } = entry.data;
+
+const articleSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'Article',
+  headline: title,
+  description,
+  datePublished: pubDate.toISOString(),
+  ...(updatedDate && { dateModified: updatedDate.toISOString() }),
+  author: {
+    '@type': 'Organization',
+    name: author,
+    url: 'https://meat.mangaroa.org',
+  },
+  publisher: {
+    '@type': 'Organization',
+    name: 'Mangaroa Farms',
+    logo: { '@type': 'ImageObject', url: 'https://meat.mangaroa.org/logo.png' },
+  },
+  mainEntityOfPage: {
+    '@type': 'WebPage',
+    '@id': `https://meat.mangaroa.org/blog/${entry.id}`,
+  },
+};
+
+const formattedDate = pubDate.toLocaleDateString('en-NZ', {
+  year: 'numeric',
+  month: 'long',
+  day: 'numeric',
+});
+---
+
+<Layout title={`${title} - Mangaroa Farms`} description={description} noindex={draft}>
+  <Fragment slot="head">
+    <script type="application/ld+json" set:html={JSON.stringify(articleSchema)} />
+    <BreadcrumbSchema items={[
+      { name: 'Blog', href: '/blog' },
+      { name: title, href: `/blog/${entry.id}` },
+    ]} />
+  </Fragment>
+
+  <main>
+    <section class="bg-mangaroa-charcoal text-white relative overflow-hidden isolate pt-32 sm:pt-40 pb-12 sm:pb-16">
+      <Header />
+      <div class="absolute inset-0 bg-gradient-to-b from-mangaroa-charcoal/90 to-mangaroa-charcoal/70"></div>
+      <div class="relative max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+        <p class="text-[14px] sm:text-base uppercase tracking-[0.25em] text-mangaroa-gold mb-4 font-medium">Blog</p>
+        <h1 class="text-3xl sm:text-4xl lg:text-5xl font-semibold leading-[1.05] tracking-tight mb-4">{title}</h1>
+        <p class="text-white/70 text-sm">{formattedDate} · {author}</p>
+      </div>
+    </section>
+
+    <article class="bg-white">
+      <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16">
+        <div class="prose prose-lg max-w-none text-mangaroa-charcoal">
+          <slot />
+        </div>
+      </div>
+    </article>
+
+    <section class="bg-mangaroa-cream border-t border-mangaroa-gray-light/70">
+      <div class="max-w-3xl mx-auto px-4 sm:px-6 py-12 sm:py-16 text-center">
+        <a href="/blog" class="inline-flex items-center gap-2 text-mangaroa-gold hover:text-mangaroa-gold-dark font-medium text-lg underline-offset-4 hover:underline transition-colors">
+          <span aria-hidden="true">←</span>
+          Back to all posts
+        </a>
+      </div>
+    </section>
+  </main>
+
+  <Footer />
+</Layout>

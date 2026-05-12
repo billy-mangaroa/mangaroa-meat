@@ -1,0 +1,913 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import { getMeatProducts } from '../lib/shopify';
+import LocalBusinessSchema from '../components/schema/LocalBusinessSchema.astro';
+import FAQPageSchema from '../components/schema/FAQPageSchema.astro';
+
+const KLAVIYO_PUBLIC_KEY = 'QVwuJb';
+
+const allProducts = await getMeatProducts().catch(() => []);
+
+const pickProduct = (patterns: RegExp[]) =>
+  allProducts.find(p => patterns.some(re => re.test(p.title)));
+
+const featuredPicks = [
+  pickProduct([/sirloin/i]),
+  pickProduct([/lamb rack/i, /rack of lamb/i, /frenched rack/i]),
+  pickProduct([/sausage/i, /snarler/i, /banger/i]),
+].filter(Boolean) as typeof allProducts;
+
+const featuredProducts = featuredPicks.length === 3 ? featuredPicks : allProducts.slice(0, 3);
+
+const stats = [
+  { n: '100%', u: 'Pasture-raised', icon: 'leaf' },
+  { n: '0', u: 'Hormones, antibiotics, GMOs', icon: 'shield' },
+  { n: 'Family', u: 'Owned & operated', icon: 'pin' },
+  { n: 'Every cut', u: 'Processed on-farm', icon: 'home' },
+];
+
+const meatTypes = [
+  {
+    name: 'Beef',
+    image: '/meat/product-hero.webp',
+    alt: 'Mangaroa Angus cow grazing on pasture',
+    body1: 'Our beef is primarily Angus or Angus Cross. We bring cattle in young and butcher at around three years old (~500kg), for consistent carcass weight, deeper flavour, and increased marbling. Some are butchered at 18 months.',
+    body2: 'Low stress handling throughout. Fed kelp, salt, and mineral mixes alongside our diverse pastures, producing premium, nutrient-dense meat.',
+  },
+  {
+    name: 'Lamb',
+    image: '/meat/farm-ewe-lamb.jpg',
+    alt: 'A Mangaroa ewe and her lamb resting on pasture',
+    body1: 'Coopworth sheep as the basis of our ewe flock. We use a Suffolk ram to breed for a quality meat breed and a better eating experience. We only butcher ewe lambs, something that separates us from supermarket and export lamb.',
+    body2: 'Minimal management and low stress handling at lambing gives lambs the best start in life. Fed kelp, salt, and mineral mixes alongside our diverse pastures, producing nutrient-dense, tender, ethically raised meat.',
+  },
+];
+
+const pillars = [
+  {
+    kicker: 'Home-processed',
+    title: 'Our crew, our craft, on-farm.',
+    body1: 'Professional slaughter happens through Preston\'s, a trusted part of the chain. Then the carcasses come home, where Rob and our local crew handle the butchery and processing.',
+    body2: 'Every cut is prepared by people who know the farm, the animals, and the land. A short chain, more care at every step.',
+  },
+  {
+    kicker: 'Regenerative',
+    title: 'Raised in alignment with nature and human health.',
+    body1: 'Pasture-raised in Mangaroa Valley with rotational grazing, virtual fencing, and diverse cover crops. The same practices that build soil also grow good meat.',
+    body2: 'The landscapes of Aotearoa were once covered in great forests, with streams and rivers held by those forests as a natural filtration system. That\'s why we fence and plant natives along our riparian and critical source areas.',
+  },
+  {
+    kicker: 'Traceable',
+    title: 'Every cut, back to the paddock.',
+    body1: 'No anonymous supply chain, no commodity feedlot meat. Every animal is raised on this farm, by this crew, on these paddocks.',
+    body2: 'You can drive past the farm where your dinner was raised. You can meet the people who handled it. That\'s the whole point.',
+  },
+];
+
+const linkClass = 'text-mangaroa-gold hover:text-mangaroa-gold-dark underline underline-offset-2';
+
+const faqs = [
+  {
+    q: 'What does "home-processed" mean?',
+    a: `Our beef and lamb are raised on Mangaroa's regenerative pastures in the valley. After professional slaughter, the carcasses come home to our local crew who handle all the butchery and processing. Shorter chain, more care, fresher meat.`,
+  },
+  {
+    q: 'What cuts are available?',
+    a: `Standard retail cuts: steaks, mince, sausages, chops, roasts, and more. The range varies week to week depending on what has been processed. Drop in to the shop to see what's in stock, or <a href="/order" class="${linkClass}">check online</a> for current availability.`,
+  },
+  {
+    q: 'How do I order online?',
+    a: `Visit our <a href="/order" class="${linkClass}">online shop</a> to browse what is available. Select your cuts, place your order, and pick up from the farm shop at a time that works for you.`,
+  },
+  {
+    q: 'Can I order a whole lamb or side of beef?',
+    a: `Yes. We take expressions of interest for whole animals, half animals, and custom bulk orders. Whole lamb starts from approximately $350-450 (butchered). Side of beef pricing varies by weight. <a href="/bulk" class="${linkClass}">Register your interest</a> and we'll be in touch.`,
+  },
+  {
+    q: 'How should I store fresh meat at home?',
+    a: `Keep fresh cuts refrigerated at or below 4°C and use within 3-5 days. For longer storage, freeze on the day you collect. Well-wrapped meat keeps for several months. Mince and sausages are best used within 2 days fresh, or frozen straight away.`,
+  },
+  {
+    q: 'How far ahead should I order a whole lamb or side of beef?',
+    a: `Bulk orders depend on the processing schedule, so timing varies. As a rough guide, allow 2-4 weeks from the day you confirm to pickup. For a specific date, <a href="mailto:online@mangaroa.org" class="${linkClass}">get in touch</a> as early as you can and we will line it up.`,
+  },
+  {
+    q: 'Can I get meat shipped to me?',
+    a: `We can ship butchered orders within New Zealand. Unbutchered carcasses are local pickup only. Let us know your preference on the <a href="/bulk" class="${linkClass}">bulk order form</a> and we will work out the best option.`,
+  },
+  {
+    q: 'Are your sausages gluten-free? What is in them?',
+    a: `Sausage recipes vary by batch. Ingredients are listed on the product label in the shop. If you have a specific allergy or dietary need, ask the staff or <a href="mailto:online@mangaroa.org" class="${linkClass}">get in touch</a> before ordering. We're happy to confirm what is in the batch you are buying.`,
+  },
+  {
+    q: 'Where exactly does the meat come from?',
+    a: `Every cut comes from animals raised on Mangaroa Farms, 29 Mangaroa Valley Road, Upper Hutt. You can <a href="https://mangaroa.org/visit-us" class="${linkClass}">visit the farm</a>, see the paddocks, and meet the team. Rob manages both the farm and the butchery.`,
+  },
+  {
+    q: 'What if something I ordered online is not available?',
+    a: `We try to keep listings accurate, but the cabinet changes week to week. If a cut you ordered is not available when we go to fulfil it, we will be in touch. You can swap, refund the difference, or hold for the next batch.`,
+  },
+];
+---
+
+<Layout title="Fresh Meat - Mangaroa Farms" description="Home-grown, home-processed beef and lamb from Mangaroa Farms. Raised on regenerative pastures in Mangaroa Valley, processed right here by our local crew. Our goal is to create the highest quality meat products, direct into kiwi homes, while restoring the vitality of the land and the Mangaroa River">
+
+  <Fragment slot="head">
+    <LocalBusinessSchema />
+    <FAQPageSchema faqs={faqs} />
+  </Fragment>
+
+  <main class="flex-1 bg-mangaroa-cream">
+
+    <!-- ═══ COMING SOON ANNOUNCEMENT BAR (above nav) ═══ -->
+    <div class="relative z-30 bg-mangaroa-gold-dark text-white px-4 py-3 sm:py-3.5 text-center text-[13px] sm:text-[14px] leading-snug">
+      <span class="inline-block font-bold uppercase tracking-[0.2em] text-[10px] sm:text-[11px] mr-2 px-2 py-0.5 bg-white/15 rounded-sm">Coming Soon</span>
+      Fresh meat from our new on-farm butchery launches in a few weeks. Frozen cuts from our previous butcher are available now in the farm shop.
+    </div>
+
+    <!-- ═══ HERO (transparent nav overlaid inside) ═══ -->
+    <section class="relative bg-mangaroa-charcoal overflow-hidden isolate">
+      <Header />
+      <picture>
+        <source media="(max-width: 768px)" srcset="/meat/hero-800.webp" type="image/webp" />
+        <source srcset="/meat/hero-1600.webp" type="image/webp" />
+        <source media="(max-width: 768px)" srcset="/meat/hero-800.jpg" type="image/jpeg" />
+        <img src="/meat/hero-800.jpg" alt="Pasture-raised Angus cow at Mangaroa Farms" width="1600" height="900" class="hero-bg absolute inset-0 w-full h-full object-cover" fetchpriority="high" loading="eager" decoding="async" />
+      </picture>
+      <div class="absolute inset-0 bg-gradient-to-b from-black/30 via-black/55 to-black/90"></div>
+      <div class="absolute inset-0 bg-[radial-gradient(circle_at_25%_15%,rgba(201,162,39,0.22),transparent_60%)] mix-blend-overlay"></div>
+      <div class="relative max-w-3xl mx-auto px-4 sm:px-6 py-28 sm:py-44 text-center">
+        <p class="text-[14px] sm:text-base uppercase tracking-[0.3em] text-white/85 mb-7 font-medium">Mangaroa Farms - Fresh Meat</p>
+        <h1 class="font-bold text-white leading-[1.02] tracking-tight mb-7" style="font-size:clamp(2.5rem,7vw,4.75rem); font-family:var(--font-display);">
+          Home-Grown,<br />
+          <span class="text-white italic font-medium">Home-Processed.</span>
+        </h1>
+        <p class="text-xl sm:text-2xl text-white max-w-2xl mx-auto leading-[1.5] mb-6 italic font-medium" style="font-family:var(--font-display);">
+          Our goal is to create the highest quality meat products, direct into kiwi homes, while restoring the vitality of the land and the Mangaroa River.
+        </p>
+        <div class="flex justify-center">
+          <a href="#how-to-buy" class="group inline-flex items-center gap-2 bg-mangaroa-gold hover:bg-mangaroa-gold-dark text-white px-8 py-4 rounded-full text-base font-semibold transition-all shadow-lg shadow-black/20 hover:shadow-xl hover:-translate-y-0.5" style="min-height:48px;">
+            See how to get it
+            <span aria-hidden="true" class="transition-transform group-hover:translate-y-0.5">↓</span>
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══ STATS STRIP — with vector icons ═══ -->
+    <section class="bg-white border-b border-mangaroa-gray-light/70">
+      <div class="max-w-5xl mx-auto px-4 sm:px-6 py-10 sm:py-14">
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-6 sm:gap-5 text-center">
+          {stats.map(({ n, u, icon }) => (
+            <div data-reveal class="flex flex-col items-center">
+              <div class="w-10 h-10 sm:w-12 sm:h-12 mb-3 text-mangaroa-gold flex items-center justify-center">
+                {icon === 'leaf' && (
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" class="w-full h-full"><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19.2 2.96a1 1 0 0 1 1.8.66c0 6-1.4 11-9 11.4-2 0-2.5 0-3.4-.6"/><path d="M2 21c0-3 1.85-5.36 5.08-6"/></svg>
+                )}
+                {icon === 'shield' && (
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" class="w-full h-full"><path stroke-linecap="round" stroke-linejoin="round" d="M12 2L4 6v6c0 5 3.5 9.5 8 10 4.5-.5 8-5 8-10V6l-8-4z"/><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4"/></svg>
+                )}
+                {icon === 'pin' && (
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" class="w-full h-full"><path stroke-linecap="round" stroke-linejoin="round" d="M12 22s-7-7-7-13a7 7 0 0 1 14 0c0 6-7 13-7 13z"/><circle cx="12" cy="9" r="2.5"/></svg>
+                )}
+                {icon === 'home' && (
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" class="w-full h-full"><path stroke-linecap="round" stroke-linejoin="round" d="M3 11l9-8 9 8v9a2 2 0 0 1-2 2h-4v-7h-6v7H5a2 2 0 0 1-2-2v-9z"/></svg>
+                )}
+              </div>
+              <div class="text-3xl sm:text-4xl font-semibold text-mangaroa-charcoal tracking-tight" style="font-family:var(--font-display);">{n}</div>
+              <div class="text-xs sm:text-sm text-mangaroa-gray mt-1 leading-snug">{u}</div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══ LEAD-IN EDITORIAL — cream ═══ -->
+    <section class="bg-mangaroa-cream">
+      <div class="max-w-5xl mx-auto px-4 sm:px-6 py-16 sm:py-24">
+        <div class="grid grid-cols-1 md:grid-cols-12 gap-8 lg:gap-14 items-center">
+          <div class="md:col-span-5 order-2 md:order-1" data-reveal>
+            <div class="aspect-[4/5] rounded-2xl overflow-hidden bg-mangaroa-earth">
+              <img src="/meat/food-raw-flatlay.webp" alt="Raw Mangaroa beef cuts laid out on a wooden board" class="w-full h-full object-cover" loading="lazy" onerror="this.style.display='none'" />
+            </div>
+          </div>
+          <div class="md:col-span-7 order-1 md:order-2">
+            <p class="text-[14px] sm:text-base uppercase tracking-[0.25em] text-mangaroa-gold mb-6 font-medium" data-reveal>What this is</p>
+            <p class="lede text-mangaroa-charcoal leading-[1.65]" data-reveal>
+              <span class="dropcap">M</span>eat from a farm that focuses on nutritional value. Beef and lamb raised alongside the Mangaroa river, by people who have deep connection to the land. Then processed right here locally, not shipped through an anonymous supply chain.
+            </p>
+            <p class="text-lg text-mangaroa-charcoal leading-[1.65] mt-5" data-reveal>
+              We pride ourselves on prime honest cuts from a small farm outside of Wellington. You can drive past the paddock where your dinner was raised, and meet the people who handled it. That's the promise of local food.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══ THREE WAYS TO GET YOUR MEAT paper ═══ -->
+    <section id="how-to-buy" class="bg-mangaroa-paper border-y border-mangaroa-gray-light/70 scroll-mt-8">
+      <div class="max-w-6xl mx-auto px-4 sm:px-6 py-20 sm:py-28">
+        <div class="max-w-2xl mb-12 sm:mb-16" data-reveal>
+          <p class="text-[14px] sm:text-base uppercase tracking-[0.25em] text-mangaroa-gold mb-4 font-medium">Three ways to get it</p>
+          <h2 class="text-3xl sm:text-5xl font-semibold text-mangaroa-charcoal leading-[1.05] tracking-tight mb-5">Order with us.</h2>
+          <p class="text-lg text-mangaroa-gray leading-[1.65]">
+            Buy online, drop into the shop, or fill the freezer with a whole animal.
+          </p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8">
+
+          <a href="/order" class="group relative bg-white border border-mangaroa-gray-light/80 rounded-2xl overflow-hidden shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all flex flex-col" data-reveal>
+            <div class="aspect-[16/10] overflow-hidden bg-mangaroa-charcoal relative">
+              <img src="/meat/food-lamb-ribs.jpg" alt="Mangaroa lamb cuts ready for pickup" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-[1.05]" loading="lazy" onerror="this.style.display='none'" />
+              <span class="absolute top-3 left-3 inline-flex items-center px-2.5 py-1 bg-mangaroa-gold-dark/95 text-white text-[10px] uppercase tracking-[0.2em] font-bold rounded-sm backdrop-blur-sm">Coming Soon</span>
+            </div>
+            <div class="p-6 sm:p-7 flex flex-col flex-1">
+              <p class="text-[12px] uppercase tracking-[0.25em] text-mangaroa-gold font-bold mb-3">01 / Online</p>
+              <h3 class="text-2xl sm:text-3xl font-semibold text-mangaroa-charcoal leading-[1.05] mb-3">Order for shop pickup</h3>
+              <p class="text-lg text-mangaroa-gray leading-[1.65] mb-6 flex-1">
+                Browse our wide-ranging meat selection online. Shipping North Island-wide, or pick up from the shop. Fresh meat from the new butchery launches in a few weeks.
+              </p>
+              <span class="inline-flex items-center justify-center gap-2 bg-mangaroa-charcoal group-hover:bg-mangaroa-gold text-white px-6 py-3 rounded-full text-[14px] font-semibold transition-colors w-full" style="min-height:44px;">
+                Shop online
+                <span aria-hidden="true" class="transition-transform group-hover:translate-x-1">→</span>
+              </span>
+            </div>
+          </a>
+
+          <a href="https://mangaroa.org/visit-us" class="group relative bg-white border border-mangaroa-gray-light/80 rounded-2xl overflow-hidden shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all flex flex-col" data-reveal>
+            <div class="aspect-[16/10] overflow-hidden bg-mangaroa-charcoal relative">
+              <img src="/meat/food-sirloin.jpg" alt="Mangaroa beef sirloin sliced and ready to serve" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-[1.05]" loading="lazy" onerror="this.style.display='none'" />
+              <span class="absolute top-3 left-3 inline-flex items-center px-2.5 py-1 bg-mangaroa-charcoal/90 text-white text-[10px] uppercase tracking-[0.2em] font-bold rounded-sm backdrop-blur-sm">Open Now</span>
+            </div>
+            <div class="p-6 sm:p-7 flex flex-col flex-1">
+              <p class="text-[12px] uppercase tracking-[0.25em] text-mangaroa-gold font-bold mb-3">02 / In person</p>
+              <h3 class="text-2xl sm:text-3xl font-semibold text-mangaroa-charcoal leading-[1.05] mb-3">Visit the farm shop</h3>
+              <p class="text-lg text-mangaroa-gray leading-[1.65] mb-6 flex-1">
+                Frozen cuts from our previous butcher are available now in the shop cabinet. Fresh on-farm meat coming in a few weeks. Open during regular shop hours.
+              </p>
+              <span class="inline-flex items-center justify-center gap-2 bg-mangaroa-charcoal group-hover:bg-mangaroa-gold text-white px-6 py-3 rounded-full text-[14px] font-semibold transition-colors w-full" style="min-height:44px;">
+                Shop hours &amp; directions
+                <span aria-hidden="true" class="transition-transform group-hover:translate-x-1">↗</span>
+              </span>
+            </div>
+          </a>
+
+          <a href="/bulk" class="group relative bg-white border border-mangaroa-gray-light/80 rounded-2xl overflow-hidden shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all flex flex-col" data-reveal>
+            <div class="aspect-[16/10] overflow-hidden bg-mangaroa-charcoal relative">
+              <img src="/meat/cta-bulk.webp" alt="Mangaroa Angus herd in pasture" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-[1.05]" loading="lazy" onerror="this.style.display='none'" />
+              <span class="absolute top-3 left-3 inline-flex items-center px-2.5 py-1 bg-mangaroa-charcoal/90 text-white text-[10px] uppercase tracking-[0.2em] font-bold rounded-sm backdrop-blur-sm">Now Taking Interest</span>
+            </div>
+            <div class="p-6 sm:p-7 flex flex-col flex-1">
+              <p class="text-[12px] uppercase tracking-[0.25em] text-mangaroa-gold font-bold mb-3">03 / Whole or half</p>
+              <h3 class="text-2xl sm:text-3xl font-semibold text-mangaroa-charcoal leading-[1.05] mb-3">Whole lamb, side of beef</h3>
+              <p class="text-lg text-mangaroa-gray leading-[1.65] mb-6 flex-1">
+                Register your interest now and you'll be first in line when the new on-farm butchery is ready to fill freezers. Tell us what you need.
+              </p>
+              <span class="inline-flex items-center justify-center gap-2 bg-mangaroa-charcoal group-hover:bg-mangaroa-gold text-white px-6 py-3 rounded-full text-[14px] font-semibold transition-colors w-full" style="min-height:44px;">
+                Register interest
+                <span aria-hidden="true" class="transition-transform group-hover:translate-x-1">→</span>
+              </span>
+            </div>
+          </a>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══ WIDE BANNER DIVIDER — lambing on Mangaroa pasture, no text ═══ -->
+    <section class="relative w-full bg-mangaroa-charcoal overflow-hidden isolate h-[260px] sm:h-[420px] lg:h-[560px]">
+      <img src="/meat/banner-sheep-lambing.webp" alt="Ewe and lamb on Mangaroa Farms pasture during spring lambing" class="absolute inset-0 w-full h-full object-cover block" style="object-position: center 65%;" loading="lazy" />
+      <div class="absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-t from-mangaroa-charcoal/30 to-transparent"></div>
+    </section>
+
+    <!-- ═══ BORN & GRAZED IN ALIGNMENT WITH NATURE — 4-point principles (cream) ═══ -->
+    <section class="bg-mangaroa-cream">
+      <div class="max-w-6xl mx-auto px-4 sm:px-6 py-16 sm:py-24">
+        <div class="max-w-3xl mb-12 sm:mb-14" data-reveal>
+          <p class="text-[14px] sm:text-base uppercase tracking-[0.25em] text-mangaroa-gold mb-4 font-medium">Our way</p>
+          <h2 class="text-3xl sm:text-5xl font-semibold text-mangaroa-charcoal leading-[1.05] tracking-tight mb-5">Born &amp; grazed in alignment with nature.</h2>
+          <p class="text-lg text-mangaroa-charcoal leading-[1.65]">
+            Mangaroa Farms livestock are raised naturally with care, in alignment with regenerative principles. Our intention is to produce premium quality and superior tasting meats. We start by selecting high-quality genetics, such as Angus beef. Then we nurture those on a diet of lush, diverse pasture, our meat is free from stress, added hormones, GMOs, and antibiotics.
+          </p>
+          <p class="text-lg text-mangaroa-gray leading-[1.65] mt-4">
+            We pride ourselves in raising quality livestock and premium tasting kai for our local community, as part of an interconnected ecosystem for soil regeneration. We're a breeding finishing unit, meaning our cattle and sheep spend their entire lives here on the farm.
+          </p>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-px bg-mangaroa-gray-light/60 border border-mangaroa-gray-light/60" data-reveal>
+          <div class="bg-mangaroa-cream p-7 sm:p-8 group hover:bg-white transition-colors duration-500">
+            <div class="w-10 h-10 mb-5 text-mangaroa-charcoal">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" class="w-full h-full"><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19.2 2.96a1 1 0 0 1 1.8.66c0 6-1.4 11-9 11.4-2 0-2.5 0-3.4-.6"/><path d="M2 21c0-3 1.85-5.36 5.08-6"/></svg>
+            </div>
+            <h3 class="text-lg sm:text-xl font-semibold text-mangaroa-charcoal leading-[1.2] mb-3">Grass-fed, pasture-grazed</h3>
+            <p class="text-[15px] text-mangaroa-gray leading-[1.65]">Our focus is on nurturing biodiverse, living soil. This creates rich nutritional grass for our animals to graze.</p>
+          </div>
+          <div class="bg-mangaroa-cream p-7 sm:p-8 group hover:bg-white transition-colors duration-500">
+            <div class="w-10 h-10 mb-5 text-mangaroa-charcoal">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" class="w-full h-full"><path d="M21 12a9 9 0 1 1-9-9c2.5 0 4.78 1 6.45 2.55"/><polyline points="21 3 21 9 15 9"/></svg>
+            </div>
+            <h3 class="text-lg sm:text-xl font-semibold text-mangaroa-charcoal leading-[1.2] mb-3">Raised with regenerative principles</h3>
+            <p class="text-[15px] text-mangaroa-gray leading-[1.65]">Our livestock are raised with ecology as a first principle. We nurture land, air and all living beings with our actions.</p>
+          </div>
+          <div class="bg-mangaroa-cream p-7 sm:p-8 group hover:bg-white transition-colors duration-500">
+            <div class="w-10 h-10 mb-5 text-mangaroa-charcoal">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" class="w-full h-full"><path d="M12 2L4 6v6c0 5 3.5 9.5 8 10 4.5-.5 8-5 8-10V6l-8-4z"/><path d="M9 12l2 2 4-4"/></svg>
+            </div>
+            <h3 class="text-lg sm:text-xl font-semibold text-mangaroa-charcoal leading-[1.2] mb-3">No synthetic hormones, GMOs, or antibiotics</h3>
+            <p class="text-[15px] text-mangaroa-gray leading-[1.65]">We work in harmony with nature, and choose not to expose our cattle and sheep to any artificial inputs.</p>
+          </div>
+          <div class="bg-mangaroa-cream p-7 sm:p-8 group hover:bg-white transition-colors duration-500">
+            <div class="w-10 h-10 mb-5 text-mangaroa-charcoal">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" class="w-full h-full"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+            </div>
+            <h3 class="text-lg sm:text-xl font-semibold text-mangaroa-charcoal leading-[1.2] mb-3">Happy and healthy conditions</h3>
+            <p class="text-[15px] text-mangaroa-gray leading-[1.65]">A stress-free environment allows our livestock to grow to their fullest potential, resulting in healthy, tasty meat.</p>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ═══ THE SOIL CONNECTION — own section, paper bg, image left ═══ -->
+    <section class="bg-mangaroa-paper border-t border-mangaroa-gray-light/60">
+      <div class="max-w-6xl mx-auto px-4 sm:px-6 py-16 sm:py-24">
+        <div class="grid grid-cols-1 md:grid-cols-12 gap-8 lg:gap-12 items-center" data-reveal>
+          <div class="md:col-span-5">
+            <div class="aspect-[4/5] rounded-2xl overflow-hidden bg-mangaroa-earth">
+              <img src="/meat/soil-connection.webp" alt="Cattle grazing on diverse Mangaroa Farms pasture, showing the soil-building grazing system" class="w-full h-full object-cover" loading="lazy" onerror="this.style.display='none'" />
+            </div>
+          </div>
+          <div class="md:col-span-7">
+            <p class="text-[14px] uppercase tracking-[0.2em] text-mangaroa-gold mb-4 font-bold">Going deeper</p>
+            <h2 class="text-3xl sm:text-5xl font-semibold text-mangaroa-charcoal leading-[1.05] tracking-tight mb-5">The soil connection.</h2>
+            <p class="text-lg text-mangaroa-charcoal leading-[1.65] mb-4">
+              Ecosystem health starts with the soil. Our livestock are part of a greater ecological system — including our underground livestock: soil microbes and the mycelium network. Through adaptive grazing, our animals play an active role in helping to rebuild our largest carbon sink.
+            </p>
+            <p class="text-lg text-mangaroa-gray leading-[1.65] mb-5">
+              We work to the five principles of regenerative soil health, tailored to this valley:
+            </p>
+            <ol class="space-y-2.5 mb-5 list-none">
+              <li class="text-[15px] sm:text-base text-mangaroa-charcoal leading-[1.55]"><span class="font-semibold">Minimise disturbance</span> — no tillage, so soil structure and fungi stay intact.</li>
+              <li class="text-[15px] sm:text-base text-mangaroa-charcoal leading-[1.55]"><span class="font-semibold">Keep soil covered</span> — pasture residue and cover crops shield the surface from sun and rain.</li>
+              <li class="text-[15px] sm:text-base text-mangaroa-charcoal leading-[1.55]"><span class="font-semibold">Living roots year-round</span> — feeding microbes in every season.</li>
+              <li class="text-[15px] sm:text-base text-mangaroa-charcoal leading-[1.55]"><span class="font-semibold">Maximise diversity</span> — diverse plants, diverse soil life, fewer pests.</li>
+              <li class="text-[15px] sm:text-base text-mangaroa-charcoal leading-[1.55]"><span class="font-semibold">Integrate livestock</span> — managed grazing cycles nutrients and stimulates regrowth.</li>
+            </ol>
+            <p class="text-lg text-mangaroa-gray leading-[1.65]">
+              The result: healthier soil biology, better water infiltration, drought and flood resilience — and food resilience for generations to come.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══ PASTURE SYSTEM — tall grass grazing / standing hay / deferred grazing ═══ -->
+    <section class="bg-mangaroa-cream border-t border-mangaroa-gray-light/60">
+      <div class="max-w-6xl mx-auto px-4 sm:px-6 py-16 sm:py-24">
+        <div class="grid grid-cols-1 md:grid-cols-12 gap-8 lg:gap-14 items-center" data-reveal>
+          <div class="md:col-span-7">
+            <p class="text-[14px] sm:text-base uppercase tracking-[0.25em] text-mangaroa-gold mb-4 font-medium">Pasture system</p>
+            <h2 class="text-3xl sm:text-5xl font-semibold text-mangaroa-charcoal leading-[1.05] tracking-tight mb-5">Tall grass, standing hay.</h2>
+            <p class="text-lg text-mangaroa-charcoal leading-[1.65] mb-4">
+              We use tall grass grazing and deferred grazing — letting paddocks grow long, then standing them through winter as standing hay. It's a way of storing feed on the land, instead of cutting and wrapping it in plastic.
+            </p>
+            <p class="text-lg text-mangaroa-gray leading-[1.65]">
+              The other options for carrying surplus feed into winter — hay, baleage, silage — are time and energy intensive, and create plastic waste. We'd rather let the grass do the storing for us.
+            </p>
+          </div>
+          <div class="md:col-span-5">
+            <div class="aspect-[4/5] rounded-2xl overflow-hidden bg-mangaroa-earth">
+              <img src="/meat/standing-hay-drone.webp" alt="Drone view of Mangaroa Farms paddocks held in tall standing hay for winter feed" class="w-full h-full object-cover" loading="lazy" onerror="this.style.display='none'" />
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══ ADAPTIVE GRAZING ON HALTER — own section, white bg, image left ═══ -->
+    <section class="bg-white border-t border-mangaroa-gray-light/60">
+      <div class="max-w-6xl mx-auto px-4 sm:px-6 py-16 sm:py-24">
+        <div class="grid grid-cols-1 md:grid-cols-12 gap-8 lg:gap-12 items-center" data-reveal>
+          <div class="md:col-span-6">
+            <div class="aspect-[4/5] rounded-2xl overflow-hidden bg-mangaroa-earth">
+              <img src="/meat/regen-2.jpg" alt="Aerial view of Mangaroa Valley pastures, showing the adaptive grazing system in action" class="w-full h-full object-cover" loading="lazy" onerror="this.style.display='none'" />
+            </div>
+          </div>
+          <div class="md:col-span-6">
+            <p class="text-[14px] uppercase tracking-[0.2em] text-mangaroa-gold mb-4 font-bold">In the photo</p>
+            <h2 class="text-3xl sm:text-5xl font-semibold text-mangaroa-charcoal leading-[1.05] tracking-tight mb-5">Adaptive grazing, on Halter.</h2>
+            <p class="text-lg text-mangaroa-charcoal leading-[1.65] mb-4">
+              Halter collars support our adaptive grazing method, protecting soil for the long term. They use virtual fencing — solar-powered, GPS-guided collars that gently steer the herd through small breaks of pasture, then move them on before the ground is overgrazed.
+            </p>
+            <p class="text-lg text-mangaroa-charcoal leading-[1.65] mb-4">
+              It means we can mimic the way wild herds once moved across the landscape: dense impact, long rest. Roots grow deeper, soil holds more water, biodiversity returns. No barbed wire cutting up the valley, and the cows stay calm because the cues are predictable.
+            </p>
+            <p class="text-base text-mangaroa-gray leading-[1.65]">
+              Learn more about the technology at <a href="https://halterhq.com" target="_blank" rel="noopener" class="text-mangaroa-gold hover:text-mangaroa-gold-dark underline underline-offset-2 font-medium">halterhq.com</a>.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══ THE SHAPE OF IT — Pillars (paper bg, tighter title leading) ═══ -->
+    <section id="shape" class="bg-mangaroa-paper border-b border-mangaroa-gray-light/70 scroll-mt-8">
+      <div class="max-w-6xl mx-auto px-4 sm:px-6 py-20 sm:py-32">
+        <div class="max-w-3xl mb-14 sm:mb-20" data-reveal>
+          <p class="text-[14px] sm:text-base uppercase tracking-[0.25em] text-mangaroa-gold mb-5 font-medium">The shape of it</p>
+          <h2 class="text-5xl sm:text-7xl font-semibold text-mangaroa-charcoal leading-[1.0] tracking-tight">Three things make this meat what it is.</h2>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-x-10 lg:gap-x-16 gap-y-14">
+          {pillars.map(col => (
+            <article data-reveal>
+              <p class="text-[14px] uppercase tracking-[0.2em] text-mangaroa-gold mb-4 font-bold">{col.kicker}</p>
+              <h3 class="text-2xl sm:text-4xl font-semibold text-mangaroa-charcoal mb-5 leading-[1.05]">{col.title}</h3>
+              <p class="text-lg text-mangaroa-gray leading-[1.65] mb-4">{col.body1}</p>
+              <p class="text-lg text-mangaroa-gray leading-[1.65]">{col.body2}</p>
+            </article>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══ REGENERATIVE — asymmetric image+text rows (cream) ═══ -->
+    <section class="bg-mangaroa-cream">
+      <div class="max-w-6xl mx-auto px-4 sm:px-6 py-16 sm:py-24">
+
+        <!-- Row 1 — text left, 2-image grid right -->
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center mb-12 lg:mb-20">
+          <div class="lg:col-span-5" data-reveal>
+            <p class="text-[14px] sm:text-base uppercase tracking-[0.25em] text-mangaroa-gold mb-4 font-medium">The land</p>
+            <h2 class="text-3xl sm:text-5xl font-semibold text-mangaroa-charcoal leading-[1.05] tracking-tight mb-6">Pasture is the system.</h2>
+            <p class="text-lg text-mangaroa-charcoal leading-[1.65] mb-4">
+              Open paddocks in Mangaroa Valley, rotational grazing managed with virtual fencing, diverse cover crops feeding the soil. The animals eat well, and the land gets better because of them.
+            </p>
+            <p class="text-lg text-mangaroa-gray leading-[1.65]">
+              Our Angus cattle, managed with Halter virtual fencing, are matched to this country and this system. The same regenerative practices that grow the land grow the meat.
+            </p>
+          </div>
+          <div class="lg:col-span-7 grid grid-cols-2 gap-3 sm:gap-4">
+            <div class="aspect-[4/5] rounded-xl overflow-hidden bg-mangaroa-earth" data-reveal>
+              <img src="/meat/farm-cow-calf-close.jpg" alt="Mother cow and calf at Mangaroa Farms" class="w-full h-full object-cover" loading="lazy" onerror="this.style.display='none'" />
+            </div>
+            <div class="aspect-[4/5] rounded-xl overflow-hidden bg-mangaroa-earth mt-8 sm:mt-12" data-reveal>
+              <img src="/meat/pasture-drone.webp" alt="Drone view of Mangaroa Farms paddocks rolling out across the valley" class="w-full h-full object-cover" loading="lazy" onerror="this.style.display='none'" />
+            </div>
+          </div>
+        </div>
+
+        <!-- Row 2 — image grid left, text right -->
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
+          <div class="lg:col-span-7 grid grid-cols-2 gap-3 sm:gap-4 order-2 lg:order-1">
+            <div class="aspect-[4/5] rounded-xl overflow-hidden bg-mangaroa-earth-light" data-reveal>
+              <img src="/meat/farm-herd-mixed.jpg" alt="The Mangaroa herd in pasture" class="w-full h-full object-cover" loading="lazy" onerror="this.style.display='none'" />
+            </div>
+            <div class="aspect-[4/5] rounded-xl overflow-hidden bg-mangaroa-earth-light mt-8 sm:mt-12" data-reveal>
+              <img src="/meat/farm-ewe-lamb.jpg" alt="An ewe and her lamb resting in the paddock" class="w-full h-full object-cover" loading="lazy" onerror="this.style.display='none'" />
+            </div>
+          </div>
+          <div class="lg:col-span-5 order-1 lg:order-2" data-reveal>
+            <p class="text-[14px] sm:text-base uppercase tracking-[0.25em] text-mangaroa-gold mb-4 font-medium">The crew</p>
+            <h2 class="text-3xl sm:text-5xl font-semibold text-mangaroa-charcoal leading-[1.05] tracking-tight mb-6">The same hands, paddock to plate.</h2>
+            <p class="text-lg text-mangaroa-charcoal leading-[1.65] mb-4">
+              Jake and Miki Coulston run the farm. Jake's uncle Rob runs the butchery. Locally managed and processed by those who call this place home.
+            </p>
+            <p class="text-lg text-mangaroa-gray leading-[1.65]">
+              Not a factory. Not a commodity supply chain. Just a small crew on one farm, raising high quality products in alignment with nature.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══ PADDOCK TO PLATE — food gallery (cream) ═══ -->
+    <section class="bg-mangaroa-cream">
+      <div class="max-w-6xl mx-auto px-4 sm:px-6 py-16 sm:py-24">
+        <div class="max-w-2xl mx-auto text-center mb-12 sm:mb-16" data-reveal>
+          <p class="text-[14px] sm:text-base uppercase tracking-[0.25em] text-mangaroa-gold mb-4 font-medium">Paddock to plate</p>
+          <h2 class="text-3xl sm:text-5xl font-semibold text-mangaroa-charcoal leading-[1.05] tracking-tight">What it becomes.</h2>
+          <p class="mt-5 text-lg text-mangaroa-gray leading-[1.65]">
+            Raw cuts on the bench. Steaks on the grill. Sliced and rested on the plate. Meat from these paddocks ends up where it matters: on your table.
+          </p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-3 sm:gap-4">
+          <figure class="group" data-reveal>
+            <div class="aspect-[4/5] rounded-xl overflow-hidden bg-mangaroa-earth-light">
+              <img src="/meat/food-raw-flatlay.webp" alt="Raw Mangaroa beef cuts on a wooden board with herbs and knife" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-[1.03]" loading="lazy" onerror="this.style.display='none'" />
+            </div>
+            <figcaption class="mt-4">
+              <p class="text-[12px] uppercase tracking-[0.25em] text-mangaroa-gold font-bold mb-1">01 / Raw</p>
+              <p class="text-lg text-mangaroa-charcoal leading-[1.5]">Sirloin, rump, mince, sausages, fresh from the butchery.</p>
+            </figcaption>
+          </figure>
+          <figure class="group md:mt-12" data-reveal>
+            <div class="aspect-[4/5] rounded-xl overflow-hidden bg-mangaroa-earth-light">
+              <img src="/meat/food-bbq.webp" alt="Mangaroa beef steaks on the grill" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-[1.03]" loading="lazy" onerror="this.style.display='none'" />
+            </div>
+            <figcaption class="mt-4">
+              <p class="text-[12px] uppercase tracking-[0.25em] text-mangaroa-gold font-bold mb-1">02 / On the grill</p>
+              <p class="text-lg text-mangaroa-charcoal leading-[1.5]">High heat, simple seasoning. Honest meat doesn't need much.</p>
+            </figcaption>
+          </figure>
+          <figure class="group" data-reveal>
+            <div class="aspect-[4/5] rounded-xl overflow-hidden bg-mangaroa-earth-light">
+              <img src="/meat/food-cooked-flatlay.webp" alt="Cooked Mangaroa steaks plated with greens and dressings" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-[1.03]" loading="lazy" onerror="this.style.display='none'" />
+            </div>
+            <figcaption class="mt-4">
+              <p class="text-[12px] uppercase tracking-[0.25em] text-mangaroa-gold font-bold mb-1">03 / On the plate</p>
+              <p class="text-lg text-mangaroa-charcoal leading-[1.5]">Sliced, rested, served. Meat from a farm with a name.</p>
+            </figcaption>
+          </figure>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══ DARK INTERLUDE — banner + claim with icons ═══ -->
+    <section class="bg-mangaroa-charcoal text-white relative overflow-hidden isolate">
+      <div class="absolute inset-0 bg-[url('/meat/dark-banner.webp')] bg-cover bg-center opacity-40"></div>
+      <div class="absolute inset-0 bg-gradient-to-b from-mangaroa-charcoal/80 via-mangaroa-charcoal/85 to-mangaroa-charcoal/95"></div>
+      <div class="absolute inset-0 bg-[radial-gradient(circle_at_75%_30%,rgba(201,162,39,0.22),transparent_55%)] mix-blend-overlay"></div>
+      <div class="relative max-w-5xl mx-auto px-4 sm:px-6 py-20 sm:py-28">
+        <div class="max-w-2xl mb-12 sm:mb-16" data-reveal>
+          <p class="text-[14px] sm:text-base uppercase tracking-[0.25em] text-white/80 mb-4 font-medium">One farm. One valley. One crew.</p>
+          <h2 class="text-3xl sm:text-5xl font-semibold leading-[1.05] tracking-tight">Meat with a return address.</h2>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-10">
+          <div data-reveal>
+            <div class="w-12 h-12 mb-5 text-white">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" class="w-full h-full"><path stroke-linecap="round" stroke-linejoin="round" d="M12 22s-7-7-7-13a7 7 0 0 1 14 0c0 6-7 13-7 13z"/><circle cx="12" cy="9" r="2.5"/></svg>
+            </div>
+            <p class="text-[14px] uppercase tracking-[0.2em] text-white/85 font-bold mb-3">Where it's from</p>
+            <h3 class="text-xl sm:text-2xl font-semibold mb-3 leading-[1.15]">Mangaroa Farm Shop: 98 Whitemans Valley Road, Upper Hutt.</h3>
+            <p class="text-lg text-white/75 leading-[1.65]">Every cut traces back to a paddock you can drive past. Visit the farm shop, walk the land, meet the team.</p>
+          </div>
+          <div data-reveal>
+            <div class="w-12 h-12 mb-5 text-white">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" class="w-full h-full"><path stroke-linecap="round" stroke-linejoin="round" d="M11 20A7 7 0 0 1 4 13V8a8 8 0 0 1 8-8h7v5a8 8 0 0 1-8 8h-3m0 7v-7"/></svg>
+            </div>
+            <p class="text-[14px] uppercase tracking-[0.2em] text-white/85 font-bold mb-3">How it's grown</p>
+            <h3 class="text-xl sm:text-2xl font-semibold mb-3 leading-[1.15]">Regenerative, not a label.</h3>
+            <p class="text-lg text-white/75 leading-[1.65] mb-3">The way we farm is in alignment with nature's rhythms, animal health, and human wellbeing. Adaptive grazing management, multi-species cover crops and adherence to regenerative principles enable this.</p>
+            <p class="text-lg text-white/75 leading-[1.65]">Halter virtual fencing. Diverse cover crops. Angus cattle suited to this land.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══ WHAT WE RAISE — Beef + Lamb info cards ═══ -->
+    <section class="bg-mangaroa-cream">
+      <div class="max-w-6xl mx-auto px-4 sm:px-6 py-16 sm:py-24">
+        <div class="max-w-2xl mb-12 sm:mb-16" data-reveal>
+          <p class="text-[14px] sm:text-base uppercase tracking-[0.25em] text-mangaroa-gold mb-4 font-medium">What we raise</p>
+          <h2 class="text-3xl sm:text-5xl font-semibold text-mangaroa-charcoal leading-[1.05] tracking-tight mb-5">Beef and lamb, with intent.</h2>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8">
+          {meatTypes.map(meat => (
+            <article class="group bg-white border border-mangaroa-gray-light/80 rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-shadow flex flex-col" data-reveal>
+              <div class="aspect-[4/3] overflow-hidden bg-mangaroa-earth-light">
+                <img src={meat.image} alt={meat.alt} class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-[1.03]" loading="lazy" onerror="this.style.display='none'" />
+              </div>
+              <div class="p-6 sm:p-8 flex flex-col flex-1">
+                <h3 class="text-3xl sm:text-4xl font-semibold text-mangaroa-charcoal leading-[1.05] mb-5">{meat.name}</h3>
+                <p class="text-lg text-mangaroa-charcoal leading-[1.65] mb-4">{meat.body1}</p>
+                <p class="text-lg text-mangaroa-gray leading-[1.65]">{meat.body2}</p>
+              </div>
+            </article>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══ PRODUCTS — paper bg ═══ -->
+    <section id="products" class="bg-mangaroa-paper border-y border-mangaroa-gray-light/70">
+      <div class="max-w-6xl mx-auto px-4 sm:px-6 py-16 sm:py-24">
+        <div class="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-6 mb-12 sm:mb-16" data-reveal>
+          <div class="max-w-xl">
+            <p class="text-[14px] sm:text-base uppercase tracking-[0.25em] text-mangaroa-gold mb-4 font-medium">On the shelves</p>
+            <h2 class="text-3xl sm:text-5xl font-semibold text-mangaroa-charcoal leading-[1.05] tracking-tight">Beef, lamb, cut and ready.</h2>
+            <p class="mt-5 text-lg text-mangaroa-gray leading-[1.65]">
+              Standard retail cuts: steaks, mince, sausages, chops, roasts. The range shifts week to week based on what's been processed.
+            </p>
+          </div>
+          <a href="/order" class="inline-flex items-center gap-2 bg-mangaroa-charcoal hover:bg-mangaroa-ink text-white px-7 py-3.5 rounded-full text-base font-semibold transition-all shadow-sm hover:shadow-md hover:-translate-y-0.5 shrink-0 self-start sm:self-auto" style="min-height:48px;">
+            See the shop
+            <span aria-hidden="true">→</span>
+          </a>
+        </div>
+
+        {featuredProducts.length > 0 && (
+          <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-3 gap-4 sm:gap-6">
+            {featuredProducts.map((product) => (
+              <a href={product.shopifyUrl} class="group bg-white border border-mangaroa-gray-light/80 rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-shadow flex flex-col" data-reveal>
+                <div class="aspect-square bg-mangaroa-earth-light overflow-hidden">
+                  {product.image ? (
+                    <img src={product.image} alt={product.imageAlt} class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-[1.03]" loading="lazy" />
+                  ) : (
+                    <div class="w-full h-full flex items-center justify-center text-mangaroa-earth/40">
+                      <svg class="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14"/></svg>
+                    </div>
+                  )}
+                </div>
+                <div class="p-5 sm:p-6 flex flex-col flex-1">
+                  <h3 class="text-lg sm:text-xl font-semibold text-mangaroa-charcoal leading-[1.05] mb-2">{product.title}</h3>
+                  <p class="text-lg text-mangaroa-gray flex-1 line-clamp-2 mb-3 leading-[1.5]">{product.description}</p>
+                  <p class="text-base font-semibold text-mangaroa-charcoal">${product.price.toFixed(2)}</p>
+                </div>
+              </a>
+            ))}
+          </div>
+        )}
+      </div>
+    </section>
+
+    <!-- ═══ HOW ORDERING WORKS — 4 step delivery flow (paper) ═══ -->
+    <section class="bg-mangaroa-paper border-y border-mangaroa-gray-light/70">
+      <div class="max-w-6xl mx-auto px-4 sm:px-6 py-16 sm:py-24">
+        <div class="max-w-2xl mb-12 sm:mb-14" data-reveal>
+          <p class="text-[14px] sm:text-base uppercase tracking-[0.25em] text-mangaroa-gold mb-4 font-medium">How ordering works</p>
+          <h2 class="text-3xl sm:text-5xl font-semibold text-mangaroa-charcoal leading-[1.05] tracking-tight mb-5">From the paddock to your plate.</h2>
+          <p class="text-lg text-mangaroa-gray leading-[1.65]">Order online, packed by our crew, delivered by NZ Post across the North Island. Or pick up from the farm shop.</p>
+        </div>
+
+        <ol class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8">
+          <li data-reveal class="flex flex-col">
+            <div class="w-12 h-12 sm:w-14 sm:h-14 mb-5 text-mangaroa-charcoal border border-mangaroa-charcoal flex items-center justify-center rounded-full">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="w-6 h-6"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.7 13.4a2 2 0 0 0 2 1.6h9.7a2 2 0 0 0 2-1.6L23 6H6"/></svg>
+            </div>
+            <p class="text-[12px] uppercase tracking-[0.25em] text-mangaroa-gold font-bold mb-2 font-mono tabular-nums">01</p>
+            <h3 class="text-xl sm:text-2xl font-semibold text-mangaroa-charcoal leading-[1.15] mb-3">Choose your order</h3>
+            <p class="text-[15px] text-mangaroa-gray leading-[1.65]">Select 1kg or more of premium Mangaroa Farms meat from our range. Place your order before 12pm Wednesdays for same week delivery. Any orders after this time will be shipped the following week.</p>
+          </li>
+          <li data-reveal class="flex flex-col">
+            <div class="w-12 h-12 sm:w-14 sm:h-14 mb-5 text-mangaroa-charcoal border border-mangaroa-charcoal flex items-center justify-center rounded-full">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="w-6 h-6"><path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/><path d="m3.3 7 8.7 5 8.7-5"/><path d="M12 22V12"/></svg>
+            </div>
+            <p class="text-[12px] uppercase tracking-[0.25em] text-mangaroa-gold font-bold mb-2 font-mono tabular-nums">02</p>
+            <h3 class="text-xl sm:text-2xl font-semibold text-mangaroa-charcoal leading-[1.15] mb-3">We pack your box</h3>
+            <p class="text-[15px] text-mangaroa-gray leading-[1.65]">After you place your order, our team starts to assemble your box of premium frozen meat.</p>
+            <p class="text-[13px] text-mangaroa-gray/80 leading-[1.6] mt-3 italic">* Please note, all meat is sent frozen. We do not recommend re-freezing if meat has thawed noticeably in the courier.</p>
+          </li>
+          <li data-reveal class="flex flex-col">
+            <div class="w-12 h-12 sm:w-14 sm:h-14 mb-5 text-mangaroa-charcoal border border-mangaroa-charcoal flex items-center justify-center rounded-full">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="w-6 h-6"><path d="M14 18V6a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v11a1 1 0 0 0 1 1h2"/><path d="M15 18H9"/><path d="M19 18h2a1 1 0 0 0 1-1v-3.65a1 1 0 0 0-.22-.624l-3.48-4.35A1 1 0 0 0 17.52 8H14"/><circle cx="17" cy="18" r="2"/><circle cx="7" cy="18" r="2"/></svg>
+            </div>
+            <p class="text-[12px] uppercase tracking-[0.25em] text-mangaroa-gold font-bold mb-2 font-mono tabular-nums">03</p>
+            <h3 class="text-xl sm:text-2xl font-semibold text-mangaroa-charcoal leading-[1.15] mb-3">Delivery</h3>
+            <p class="text-[15px] text-mangaroa-gray leading-[1.65]">Your order will be picked up on a Thursday morning by NZ Post. You will receive a tracking number when your package is scanned onboard.</p>
+            <p class="text-[13px] text-mangaroa-gray/80 leading-[1.6] mt-3 italic">* Please note: unfortunately we cannot deliver to rural addresses, or the South Island.</p>
+          </li>
+          <li data-reveal class="flex flex-col">
+            <div class="w-12 h-12 sm:w-14 sm:h-14 mb-5 text-mangaroa-charcoal border border-mangaroa-charcoal flex items-center justify-center rounded-full">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="w-6 h-6"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="4"/></svg>
+            </div>
+            <p class="text-[12px] uppercase tracking-[0.25em] text-mangaroa-gold font-bold mb-2 font-mono tabular-nums">04</p>
+            <h3 class="text-xl sm:text-2xl font-semibold text-mangaroa-charcoal leading-[1.15] mb-3">Enjoy</h3>
+            <p class="text-[15px] text-mangaroa-gray leading-[1.65]">Savour your meal of Mangaroa Farms meat, knowing it was raised well and packed full of nutrients.</p>
+            <p class="text-[13px] text-mangaroa-gray/80 leading-[1.6] mt-3 italic">* Recycle packaging: place all used packaging back into a box and return to us when you're ready.</p>
+          </li>
+        </ol>
+      </div>
+    </section>
+
+    <!-- ═══ PROCESS — "Plug In" 2-card pattern (cream) ═══ -->
+    <section class="bg-mangaroa-cream">
+      <div class="max-w-6xl mx-auto px-4 sm:px-6 py-16 sm:py-24">
+        <div class="max-w-2xl mb-12 sm:mb-16" data-reveal>
+          <p class="text-[14px] sm:text-base uppercase tracking-[0.25em] text-mangaroa-gold mb-4 font-medium">Our process</p>
+          <h2 class="text-3xl sm:text-5xl font-semibold text-mangaroa-charcoal leading-[1.05] tracking-tight mb-5">One farm where it all happens.</h2>
+          <p class="text-lg text-mangaroa-gray leading-[1.65]">A short, transparent chain: from paddock to butchery to plate, with no anonymous middle.</p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8">
+
+          <article class="group bg-white border border-mangaroa-gray-light/80 rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-shadow flex flex-col" data-reveal>
+            <div class="aspect-[16/10] overflow-hidden bg-mangaroa-earth-light">
+              <img src="/meat/regen-4.jpg" alt="Pasture-led farming system at Mangaroa Farms" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-[1.03]" loading="lazy" onerror="this.style.display='none'" />
+            </div>
+            <div class="p-6 sm:p-8 flex flex-col flex-1">
+              <p class="text-[14px] uppercase tracking-[0.2em] text-mangaroa-gold font-bold mb-3">Regenerative grazing</p>
+              <h3 class="text-2xl sm:text-3xl font-semibold text-mangaroa-charcoal leading-[1.05] mb-4">Pasture-led farming.</h3>
+              <p class="text-lg text-mangaroa-gray leading-[1.65] mb-6 flex-1">
+                The farming system behind the meat. Rotational grazing managed with Halter virtual fencing, diverse cover crops feeding the soil, Angus cattle suited to the land. Producing more, with fewer inputs.
+              </p>
+              <a href="https://mangaroa.org" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 text-mangaroa-gold hover:text-mangaroa-gold-dark font-medium text-lg underline-offset-4 hover:underline transition-colors">
+                Learn about Mangaroa Farms
+                <span aria-hidden="true" class="transition-transform group-hover:translate-x-1">↗</span>
+              </a>
+            </div>
+          </article>
+
+          <article class="group bg-white border border-mangaroa-gray-light/80 rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-shadow flex flex-col" data-reveal>
+            <div class="aspect-[16/10] overflow-hidden bg-mangaroa-earth-light">
+              <img src="/meat/butcher-image.jpg" alt="Mangaroa Farms on-farm butchery — Rob and the local crew preparing cuts" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-[1.03]" loading="lazy" onerror="this.style.display='none'" />
+            </div>
+            <div class="p-6 sm:p-8 flex flex-col flex-1">
+              <p class="text-[14px] uppercase tracking-[0.2em] text-mangaroa-gold font-bold mb-3">Locally processed</p>
+              <h3 class="text-2xl sm:text-3xl font-semibold text-mangaroa-charcoal leading-[1.05] mb-4">On-farm butchery.</h3>
+              <p class="text-lg text-mangaroa-gray leading-[1.65] mb-6 flex-1">
+                Professional slaughter happens through Preston's Foods, a trusted part of the chain we've worked with for years. Then the carcasses come home, where Rob and the local crew handle all butchery and processing.
+              </p>
+              <span class="inline-flex items-center gap-2 text-mangaroa-gold font-medium text-lg">
+                The same hands, paddock to plate
+              </span>
+            </div>
+          </article>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══ FAQ (paper) ═══ -->
+    <section class="bg-mangaroa-paper border-y border-mangaroa-gray-light/70">
+      <div class="max-w-3xl mx-auto px-4 sm:px-6 py-16 sm:py-24">
+        <div class="text-center mb-10 sm:mb-14" data-reveal>
+          <p class="text-[14px] sm:text-base uppercase tracking-[0.25em] text-mangaroa-gold mb-4 font-medium">Practicalities</p>
+          <h2 class="text-3xl sm:text-5xl font-semibold text-mangaroa-charcoal leading-[1.05] tracking-tight">Common questions.</h2>
+        </div>
+
+        <div class="space-y-3" data-reveal>
+          {faqs.map(({ q, a }) => (
+            <details class="group bg-white border border-mangaroa-gray-light/80 rounded-xl overflow-hidden">
+              <summary class="flex items-start justify-between gap-4 cursor-pointer px-5 sm:px-6 py-4 sm:py-5 text-lg font-medium text-mangaroa-charcoal hover:bg-mangaroa-cream/50 transition-colors">
+                <span>{q}</span>
+                <span class="ml-auto shrink-0 text-mangaroa-gold transition-transform group-open:rotate-45 text-xl leading-none mt-0.5" aria-hidden="true">＋</span>
+              </summary>
+              <div class="px-5 sm:px-6 pb-5 sm:pb-6 -mt-1 text-lg text-mangaroa-gray leading-[1.65]" set:html={a} />
+            </details>
+          ))}
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ═══ GOT QUESTIONS? — soft contact off-ramp (cream) ═══ -->
+    <section class="bg-mangaroa-cream">
+      <div class="max-w-2xl mx-auto px-4 sm:px-6 py-16 sm:py-20 text-center">
+        <p class="text-[14px] sm:text-base uppercase tracking-[0.25em] text-mangaroa-gold mb-4 font-medium" data-reveal>Got questions?</p>
+        <h2 class="text-3xl sm:text-5xl font-semibold text-mangaroa-charcoal leading-[1.05] tracking-tight mb-5" data-reveal>Drop us a line.</h2>
+        <p class="text-lg text-mangaroa-gray leading-[1.65] mb-8" data-reveal>
+          Curious about cuts, custom orders, shipping, or just want to chat? We'd love to hear from you.
+        </p>
+        <a href="mailto:online@mangaroa.org" class="inline-flex items-center gap-2 bg-white border border-mangaroa-gold text-mangaroa-charcoal hover:bg-mangaroa-gold hover:text-white px-7 py-3.5 rounded-full text-base font-semibold transition-all shadow-sm hover:shadow-md hover:-translate-y-0.5" data-reveal style="min-height:48px;">
+          online@mangaroa.org
+          <span aria-hidden="true">↗</span>
+        </a>
+      </div>
+    </section>
+
+    <!-- ═══ FINAL CTA — focused dark band, two clear actions ═══ -->
+    <section class="relative bg-mangaroa-charcoal text-white overflow-hidden isolate">
+      <picture>
+        <source srcset="/meat/food-bbq.webp" type="image/webp" />
+        <img src="/meat/food-bbq.webp" alt="" aria-hidden="true" class="absolute inset-0 w-full h-full object-cover opacity-35" loading="lazy" />
+      </picture>
+      <div class="absolute inset-0 bg-gradient-to-b from-mangaroa-charcoal/85 via-mangaroa-charcoal/80 to-mangaroa-charcoal/95"></div>
+      <div class="absolute inset-0 bg-[radial-gradient(circle_at_30%_40%,rgba(201,162,39,0.12),transparent_55%)] mix-blend-overlay"></div>
+      <div class="relative max-w-3xl mx-auto px-4 sm:px-6 py-20 sm:py-28 text-center">
+        <p class="text-[14px] sm:text-base uppercase tracking-[0.3em] text-white/80 mb-5 font-medium" data-reveal>Ready when you are</p>
+        <h2 class="text-3xl sm:text-5xl lg:text-6xl font-semibold leading-[1.05] tracking-tight mb-6" data-reveal>
+          Get Mangaroa meat<br /><span class="text-white">in your kitchen.</span>
+        </h2>
+        <p class="text-lg text-white/80 leading-[1.65] mb-10 max-w-xl mx-auto" data-reveal>
+          Frozen cuts in the shop now. Fresh meat from our new on-farm butchery launches in a few weeks - register interest to be first.
+        </p>
+        <div class="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4 flex-wrap" data-reveal>
+          <a href="/order" class="group inline-flex items-center gap-2 bg-mangaroa-gold hover:bg-mangaroa-gold-dark text-white px-8 py-4 rounded-full text-base font-semibold transition-all shadow-lg shadow-black/20 hover:shadow-xl hover:-translate-y-0.5" style="min-height:48px;">
+            Order online
+            <span aria-hidden="true" class="transition-transform group-hover:translate-x-1">→</span>
+          </a>
+          <a href="https://mangaroa.org/visit-us" class="group inline-flex items-center gap-2 bg-white/10 hover:bg-white/20 border border-white/40 text-white px-8 py-4 rounded-full text-base font-semibold transition-all backdrop-blur-sm" style="min-height:48px;">
+            Visit the shop
+            <span aria-hidden="true" class="transition-transform group-hover:translate-x-1">↗</span>
+          </a>
+          <a href="/bulk" class="group inline-flex items-center gap-2 bg-white/10 hover:bg-white/20 border border-white/40 text-white px-8 py-4 rounded-full text-base font-semibold transition-all backdrop-blur-sm" style="min-height:48px;">
+            Register bulk interest
+            <span aria-hidden="true" class="transition-transform group-hover:translate-x-1">→</span>
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══ NEWSLETTER (paper) ═══ -->
+    <section class="bg-mangaroa-paper border-t border-mangaroa-gray-light/70">
+      <div class="max-w-3xl mx-auto px-4 sm:px-6 py-16 sm:py-20 text-center">
+        <p class="text-[14px] sm:text-base uppercase tracking-[0.25em] text-mangaroa-gold mb-4 font-medium" data-reveal>Stay in the loop</p>
+        <h2 class="text-3xl sm:text-5xl font-semibold text-mangaroa-charcoal leading-[1.05] tracking-tight mb-5" data-reveal>News from the paddock.</h2>
+        <p class="text-lg text-mangaroa-gray leading-[1.65] mb-8 max-w-xl mx-auto" data-reveal>
+          Sign up for our monthly newsletter to receive farm news and updates.
+        </p>
+        <form id="newsletter-form" class="grid sm:grid-cols-[1fr_1fr_auto] gap-3 max-w-2xl mx-auto" data-reveal>
+          <input
+            type="text"
+            id="newsletter-firstname"
+            placeholder="First name"
+            aria-label="First name"
+            autocomplete="given-name"
+            class="px-4 py-3 rounded-full bg-white border border-mangaroa-gray-light text-mangaroa-charcoal placeholder:text-mangaroa-gray focus:outline-none focus:border-mangaroa-gold focus:ring-3 focus:ring-mangaroa-gold/20 transition-colors"
+          />
+          <input
+            type="email"
+            id="newsletter-email"
+            placeholder="Your email"
+            aria-label="Email address"
+            required
+            autocomplete="email"
+            class="px-4 py-3 rounded-full bg-white border border-mangaroa-gray-light text-mangaroa-charcoal placeholder:text-mangaroa-gray focus:outline-none focus:border-mangaroa-gold focus:ring-3 focus:ring-mangaroa-gold/20 transition-colors"
+          />
+          <button type="submit" id="newsletter-btn" class="inline-flex items-center justify-center gap-2 bg-mangaroa-charcoal hover:bg-mangaroa-ink text-white px-7 py-3.5 rounded-full text-base font-semibold transition-all shadow-sm hover:shadow-md hover:-translate-y-0.5 whitespace-nowrap" style="min-height:48px;">
+            Sign me up
+          </button>
+        </form>
+        <p id="newsletter-success" class="hidden text-mangaroa-gold-dark text-lg font-medium mt-4">
+          You're on the list. We'll be in touch.
+        </p>
+        <p id="newsletter-error" class="hidden text-red-700 text-lg mt-4">
+          Something went wrong. Try again or email us directly.
+        </p>
+      </div>
+    </section>
+
+  </main>
+
+  <Footer />
+
+</Layout>
+
+<script>
+  // Scroll-reveal observer
+  const revealEls = document.querySelectorAll<HTMLElement>('[data-reveal]');
+  if ('IntersectionObserver' in window) {
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('is-visible');
+          io.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
+    revealEls.forEach(el => io.observe(el));
+  } else {
+    revealEls.forEach(el => el.classList.add('is-visible'));
+  }
+</script>
+
+<script define:vars={{ KLAVIYO_PUBLIC_KEY: 'QVwuJb' }}>
+  const form = document.getElementById('newsletter-form');
+  const emailInput = document.getElementById('newsletter-email');
+  const firstNameInput = document.getElementById('newsletter-firstname');
+  const btn = document.getElementById('newsletter-btn');
+  const successMsg = document.getElementById('newsletter-success');
+  const errorMsg = document.getElementById('newsletter-error');
+
+  form?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const email = emailInput?.value?.trim();
+    const firstName = firstNameInput?.value?.trim();
+    if (!email) return;
+
+    btn.textContent = 'Signing up…';
+    btn.disabled = true;
+    successMsg?.classList.add('hidden');
+    errorMsg?.classList.add('hidden');
+
+    try {
+      const profileAttrs = { email };
+      if (firstName) profileAttrs.first_name = firstName;
+
+      const res = await fetch('https://a.klaviyo.com/client/subscriptions/?company_id=' + KLAVIYO_PUBLIC_KEY, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'revision': '2024-02-15' },
+        body: JSON.stringify({
+          data: {
+            type: 'subscription',
+            attributes: {
+              profile: { data: { type: 'profile', attributes: profileAttrs } },
+              custom_source: 'meat.mangaroa.org'
+            },
+            relationships: {
+              list: { data: { type: 'list', id: 'VYSmUq' } }
+            }
+          }
+        })
+      });
+
+      if (res.ok || res.status === 202) {
+        successMsg?.classList.remove('hidden');
+        form?.classList.add('hidden');
+      } else {
+        throw new Error('Signup failed');
+      }
+    } catch {
+      errorMsg?.classList.remove('hidden');
+      btn.textContent = 'Sign me up';
+      btn.disabled = false;
+    }
+  });
+</script>

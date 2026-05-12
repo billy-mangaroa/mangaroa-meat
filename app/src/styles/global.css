@@ -1,0 +1,212 @@
+@import "tailwindcss";
+
+/* Mangaroa Farms Brand Colors */
+@theme {
+  --color-mangaroa-cream: #F8F6F1;
+  --color-mangaroa-paper: #FDFCF9;
+  --color-mangaroa-earth: #8B7355;
+  --color-mangaroa-earth-light: #A69076;
+  --color-mangaroa-charcoal: #2C2C2C;
+  --color-mangaroa-gray: #6B6B6B;
+  --color-mangaroa-gray-light: #E5E5E5;
+
+  /* Gold accent colors (for buttons/CTAs) */
+  --color-mangaroa-gold: #C9A227;
+  --color-mangaroa-gold-light: #D4B34A;
+  --color-mangaroa-gold-dark: #A8871F;
+
+  /* Brand typography (Adobe Fonts / Typekit kit gdd7waj) */
+  --font-sans: 'aktiv-grotesk', 'Inter', system-ui, -apple-system, sans-serif;
+  --font-display: 'mr-eaves-modern', 'aktiv-grotesk', 'Inter', system-ui, sans-serif;
+  /* Legacy alias — existing `font-family: var(--font-serif)` inline styles
+     point at the display face so they keep working without a sweep. */
+  --font-serif: 'mr-eaves-modern', 'aktiv-grotesk', 'Inter', system-ui, sans-serif;
+}
+
+/* Base styles */
+html {
+  scroll-behavior: smooth;
+  -webkit-tap-highlight-color: transparent;
+}
+
+body {
+  @apply bg-mangaroa-cream text-mangaroa-charcoal antialiased;
+  font-family: var(--font-sans);
+  font-feature-settings: 'kern' 1, 'liga' 1;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Display typography for all headings */
+h1, h2, h3 {
+  font-family: var(--font-display);
+  font-feature-settings: 'kern' 1, 'liga' 1;
+  letter-spacing: -0.01em;
+  text-wrap: balance;
+}
+
+/* Tighter line-wrapping on body text */
+p, li, summary {
+  text-wrap: pretty;
+}
+
+/* Editorial dropcap */
+.lede { font-size: clamp(1.125rem, 2.2vw, 1.375rem); }
+.dropcap {
+  float: left;
+  font-size: 4rem;
+  line-height: 0.78;
+  font-weight: 600;
+  margin: 0.1rem 0.18rem -0.1rem 0;
+  color: var(--color-mangaroa-gold);
+  font-family: var(--font-display);
+}
+
+/* Hero ken-burns animation */
+.hero-bg { animation: kenBurns 32s ease-in-out infinite alternate; }
+@keyframes kenBurns {
+  from { transform: scale(1); }
+  to   { transform: scale(1.06); }
+}
+
+/* Scroll-reveal */
+[data-reveal] {
+  opacity: 0;
+  transform: translateY(14px);
+  transition: opacity 0.7s cubic-bezier(0.22, 1, 0.36, 1), transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+  will-change: opacity, transform;
+}
+[data-reveal].is-visible { opacity: 1; transform: translateY(0); }
+@media (prefers-reduced-motion: reduce) {
+  [data-reveal] { opacity: 1; transform: none; transition: none; }
+  .hero-bg { animation: none !important; }
+}
+
+/* FAQ details polish */
+details[open] summary { background: color-mix(in srgb, var(--color-mangaroa-cream) 80%, white); }
+details > summary:focus-visible { outline: 2px solid var(--color-mangaroa-gold); outline-offset: -2px; }
+
+/* Form patterns (used by bulk.astro) */
+.form-input {
+  width: 100%; padding: 0.7rem 0.85rem; font-size: 0.9375rem;
+  border: 1px solid var(--color-mangaroa-gray-light); border-radius: 0.625rem; background: white;
+  color: var(--color-mangaroa-charcoal);
+  transition: border-color 0.15s, box-shadow 0.15s, background 0.15s;
+}
+.form-input:hover { border-color: color-mix(in srgb, var(--color-mangaroa-gold) 55%, var(--color-mangaroa-gray-light)); }
+.form-input:focus {
+  outline: none; border-color: var(--color-mangaroa-gold);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-mangaroa-gold) 22%, transparent);
+}
+.form-input::placeholder { color: color-mix(in srgb, var(--color-mangaroa-gray) 55%, transparent); }
+textarea.form-input { line-height: 1.6; }
+select.form-input {
+  appearance: none; padding-right: 2.25rem;
+  background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23999' stroke-width='2'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat; background-position: right 0.75rem center;
+}
+
+.radio-card { cursor: pointer; }
+.radio-card-inner {
+  display: flex; align-items: center; justify-content: center;
+  padding: 0.7rem 0.5rem; font-size: 0.9375rem; font-weight: 500;
+  color: var(--color-mangaroa-charcoal);
+  border: 1px solid var(--color-mangaroa-gray-light); border-radius: 0.625rem; background: white;
+  transition: all 0.15s ease;
+}
+.radio-card:hover .radio-card-inner {
+  border-color: color-mix(in srgb, var(--color-mangaroa-gold) 60%, var(--color-mangaroa-gray-light));
+}
+.radio-card input:checked + .radio-card-inner {
+  background: color-mix(in srgb, var(--color-mangaroa-gold) 8%, white);
+  border-color: var(--color-mangaroa-gold);
+  color: var(--color-mangaroa-gold-dark);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-mangaroa-gold) 18%, transparent);
+}
+
+.check-row {
+  display: flex; align-items: flex-start; gap: 0.75rem;
+  padding: 0.75rem 0.875rem;
+  border: 1px solid var(--color-mangaroa-gray-light); border-radius: 0.625rem; background: white;
+  cursor: pointer; transition: all 0.15s;
+  font-size: 0.9375rem;
+}
+.check-row:hover {
+  border-color: color-mix(in srgb, var(--color-mangaroa-gold) 60%, var(--color-mangaroa-gray-light));
+  background: color-mix(in srgb, var(--color-mangaroa-gold) 3%, white);
+}
+.check-row:has(input:checked) {
+  border-color: var(--color-mangaroa-gold);
+  background: color-mix(in srgb, var(--color-mangaroa-gold) 6%, white);
+}
+.check-input {
+  margin-top: 0.2rem; flex-shrink: 0;
+  width: 1rem; height: 1rem; border-radius: 0.25rem;
+  border: 1px solid var(--color-mangaroa-gray-light);
+  color: var(--color-mangaroa-gold);
+  accent-color: var(--color-mangaroa-gold);
+}
+.check-input:focus { outline: 2px solid var(--color-mangaroa-gold); outline-offset: 1px; }
+
+/* Prevent zoom on input focus (iOS) */
+@media (max-width: 640px) {
+  input, select, textarea {
+    font-size: 16px !important;
+  }
+}
+
+/* Primary button style (gold) */
+.btn-primary {
+  @apply inline-flex items-center justify-center gap-2 bg-mangaroa-gold hover:bg-mangaroa-gold-dark active:bg-mangaroa-gold-dark text-white px-5 sm:px-6 py-3 sm:py-3.5 rounded-lg font-medium transition-colors text-sm sm:text-base;
+  min-height: 44px;
+}
+
+/* Secondary button style */
+.btn-secondary {
+  @apply inline-flex items-center justify-center gap-2 bg-white hover:bg-mangaroa-cream active:bg-mangaroa-cream text-mangaroa-charcoal px-5 sm:px-6 py-3 sm:py-3.5 rounded-lg font-medium border border-mangaroa-gray-light transition-colors text-sm sm:text-base;
+  min-height: 44px;
+}
+
+/* Focus styles for accessibility */
+a:focus-visible,
+button:focus-visible {
+  @apply outline-none ring-2 ring-mangaroa-gold ring-offset-2;
+}
+
+/* Prose styles */
+.prose p {
+  @apply mb-4 leading-relaxed;
+}
+
+.prose h2 {
+  @apply text-2xl sm:text-3xl font-semibold text-mangaroa-charcoal mb-4 mt-8;
+  font-family: var(--font-serif);
+}
+
+.prose h3 {
+  @apply text-xl font-semibold text-mangaroa-charcoal mb-3 mt-6;
+}
+
+.prose ul {
+  @apply mb-4 pl-6 list-disc;
+}
+
+.prose li {
+  @apply mb-1;
+}
+
+/* Product card */
+.product-card {
+  @apply bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-all duration-200;
+}
+
+.product-card:hover {
+  @apply -translate-y-0.5;
+}
+
+/* Safe area padding for notched devices */
+@supports (padding: env(safe-area-inset-bottom)) {
+  .safe-bottom {
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+}

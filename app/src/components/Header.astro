@@ -1,0 +1,173 @@
+---
+const navItems = [
+  {
+    label: 'Shop',
+    href: 'https://mangaroa.org/order-online',
+    dropdown: [
+      { label: 'Farm Shop / Kete Kai', href: 'https://mangaroa.org/visit-us' },
+      { label: 'Fresh Meat', href: '/', current: true },
+      { label: 'Order Meat Online', href: '/order' },
+      { label: 'Events', href: 'https://events.mangaroa.org/' },
+      { label: 'Gift Cards', href: 'https://store.mangaroa.org/products/giftcard?_pos=1&_psq=gift+card&_ss=e&_v=1.0' },
+    ]
+  },
+  {
+    label: "What's On",
+    href: 'https://mangaroa.org/whats-on',
+    dropdown: [
+      { label: 'Events', href: 'https://events.mangaroa.org/' },
+      { label: 'Volunteer', href: 'https://mangaroa.org/volunteer' },
+      { label: 'Newsletter', href: 'https://mangaroa.org/newsletter' },
+    ]
+  },
+  {
+    label: 'Visit Us',
+    href: 'https://mangaroa.org/visit-us-1',
+    dropdown: [
+      { label: 'Farm Shop / Kete Kai', href: 'https://mangaroa.org/visit-us' },
+      { label: 'Book Your Event', href: 'https://mangaroa.org/book' },
+      { label: 'Stay with Us', href: 'https://mangaroa.org/stay' },
+      { label: 'Earth School', href: 'https://mangaroa.org/earth-school' },
+    ]
+  },
+  {
+    label: 'Explore',
+    href: 'https://mangaroa.org/explore',
+    dropdown: [
+      { label: 'Stories', href: 'https://mangaroa.org/stories' },
+      { label: 'Recipes', href: 'https://mangaroa.org/recipes' },
+      { label: 'Our Meat', href: 'https://meat.mangaroa.org/' },
+      { label: 'Country Calendar', href: 'https://mangaroa.org/country-calendar' },
+      { label: 'Gallery', href: 'https://mangaroa.org/gallery' },
+    ]
+  },
+  {
+    label: 'About',
+    href: 'https://mangaroa.org/about',
+    dropdown: [
+      { label: 'About Us', href: 'https://mangaroa.org/about-us' },
+      { label: 'Our Meat', href: 'https://meat.mangaroa.org/' },
+      { label: 'Contact', href: 'https://mangaroa.org/contact' },
+    ]
+  }
+];
+---
+
+<header class="absolute top-0 inset-x-0 z-50 bg-transparent">
+  <div class="max-w-6xl mx-auto px-3 sm:px-6 lg:px-8">
+    <div class="flex items-center justify-between h-24 sm:h-28">
+      <!-- Logo -->
+      <a href="https://mangaroa.org" class="flex items-center gap-2 sm:gap-3 hover:opacity-80 transition-opacity py-2">
+        <img src="/logo.png" alt="Mangaroa Farms" class="h-14 sm:h-16 w-auto invert drop-shadow-lg" />
+      </a>
+
+      <!-- Desktop Navigation with dropdowns -->
+      <nav class="hidden md:flex items-center gap-1">
+        {navItems.map((item) => (
+          <div class="nav-dropdown relative group">
+            <a
+              href={item.href}
+              class="flex items-center gap-1 px-3 py-2 text-sm font-medium uppercase tracking-[0.15em] transition-colors text-white/90 hover:text-white"
+            >
+              {item.label}
+              {item.dropdown && (
+                <svg class="w-3.5 h-3.5 transition-transform group-hover:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                </svg>
+              )}
+            </a>
+            {item.dropdown && (
+              <div class="dropdown-menu absolute top-full left-0 pt-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200">
+                <div class="bg-white/10 backdrop-blur-md border border-white/20 py-2 min-w-56 shadow-2xl">
+                  {item.dropdown.map((subItem) => (
+                    <a
+                      href={subItem.href}
+                      class="block px-4 py-2.5 text-sm text-white/90 hover:text-white hover:bg-white/10 transition-colors"
+                    >
+                      {subItem.label}
+                    </a>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+        ))}
+      </nav>
+
+      <!-- Mobile menu button -->
+      <button
+        id="mobile-menu-btn"
+        class="md:hidden p-3 -mr-2 text-white hover:bg-white/10 active:bg-white/10 rounded-lg transition-colors"
+        aria-label="Open menu"
+        style="min-width: 44px; min-height: 44px;"
+      >
+        <svg id="menu-icon-open" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+        </svg>
+        <svg id="menu-icon-close" class="w-6 h-6 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- Mobile menu - translucent dark glass over hero -->
+  <div id="mobile-menu" class="hidden md:hidden bg-mangaroa-charcoal/85 backdrop-blur-md border-t border-white/10 max-h-[calc(100vh-4rem)] overflow-y-auto overscroll-contain">
+    <nav class="px-3 py-3 space-y-1 safe-bottom">
+      {navItems.map((item) => (
+        <div class="mobile-nav-item">
+          <button
+            class="mobile-nav-toggle w-full flex items-center justify-between px-4 py-3.5 rounded-lg text-left transition-colors text-white/90 hover:text-white active:bg-white/10"
+            data-has-dropdown={item.dropdown ? 'true' : 'false'}
+            style="min-height: 48px;"
+          >
+            <span class="text-base">{item.label}</span>
+            {item.dropdown && (
+              <svg class="mobile-nav-arrow w-5 h-5 transition-transform text-white/50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+              </svg>
+            )}
+          </button>
+          {item.dropdown && (
+            <div class="mobile-nav-dropdown hidden pl-4 mt-1 space-y-0.5 pb-2">
+              {item.dropdown.map((subItem) => (
+                <a
+                  href={subItem.href}
+                  class="block px-4 py-3 text-base text-white/70 hover:text-white active:bg-white/10 rounded-lg transition-colors"
+                  style="min-height: 44px;"
+                >
+                  {subItem.label}
+                </a>
+              ))}
+            </div>
+          )}
+        </div>
+      ))}
+    </nav>
+  </div>
+</header>
+
+<script>
+  const menuBtn = document.getElementById('mobile-menu-btn');
+  const mobileMenu = document.getElementById('mobile-menu');
+  const menuIconOpen = document.getElementById('menu-icon-open');
+  const menuIconClose = document.getElementById('menu-icon-close');
+
+  menuBtn?.addEventListener('click', () => {
+    const isOpen = !mobileMenu?.classList.contains('hidden');
+    mobileMenu?.classList.toggle('hidden');
+    menuIconOpen?.classList.toggle('hidden', !isOpen);
+    menuIconClose?.classList.toggle('hidden', isOpen);
+  });
+
+  document.querySelectorAll('.mobile-nav-toggle').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const hasDropdown = btn.getAttribute('data-has-dropdown') === 'true';
+      if (!hasDropdown) return;
+      const dropdown = btn.nextElementSibling;
+      const arrow = btn.querySelector('.mobile-nav-arrow');
+      dropdown?.classList.toggle('hidden');
+      arrow?.classList.toggle('rotate-180');
+    });
+  });
+</script>

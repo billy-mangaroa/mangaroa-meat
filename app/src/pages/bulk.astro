@@ -1,0 +1,353 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import BreadcrumbSchema from '../components/schema/BreadcrumbSchema.astro';
+---
+
+<Layout title="Bulk Meat Orders - Mangaroa Farms" description="Order a whole lamb from ~$350, side of beef, or custom bulk cuts from Mangaroa Farms. Regeneratively raised in the Hutt Valley. Register interest for pricing and availability.">
+
+  <Fragment slot="head">
+    <BreadcrumbSchema items={[{ name: 'Bulk Orders', href: '/bulk' }]} />
+  </Fragment>
+
+  <main>
+    <!-- Page Header -->
+    <section class="bg-mangaroa-charcoal text-white relative overflow-hidden isolate pt-32 sm:pt-40 pb-16 sm:pb-20">
+      <Header />
+      <div class="absolute inset-0 bg-[url('/meat/banner-herd.jpg')] bg-cover bg-center opacity-55"></div>
+      <div class="absolute inset-0 bg-gradient-to-b from-mangaroa-charcoal/55 via-mangaroa-charcoal/65 to-mangaroa-charcoal/80"></div>
+      <div class="absolute inset-0 bg-[radial-gradient(circle_at_75%_30%,rgba(201,162,39,0.18),transparent_55%)] mix-blend-overlay"></div>
+      <div class="relative max-w-3xl mx-auto px-4 sm:px-6 lg:px-8" data-reveal>
+        <p class="text-[14px] sm:text-[16px] uppercase tracking-[0.25em] text-mangaroa-gold-light mb-4 font-medium">Bulk &amp; custom orders</p>
+        <h1 class="text-3xl sm:text-5xl lg:text-6xl font-semibold leading-[1.05] tracking-tight mb-5">Whole lamb. Side of beef. Or just what you need.</h1>
+        <p class="text-white/85 text-base sm:text-lg max-w-2xl leading-[1.7]">
+          Tell us what you're interested in and we'll be in touch to work out timing, availability, and pricing.
+        </p>
+      </div>
+    </section>
+
+    <!-- Info -->
+    <section class="bg-white border-b border-mangaroa-gray-light/70">
+      <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-14">
+        <div class="grid sm:grid-cols-2 gap-8 sm:gap-10">
+          <div data-reveal>
+            <p class="text-[14px] uppercase tracking-[0.2em] text-mangaroa-gold mb-2 font-bold">How it works</p>
+            <p class="text-mangaroa-gray text-[15px] leading-[1.7]">
+              Register your interest below. We'll contact you to confirm availability, timing, and pricing. Supply is subject to our processing schedule - first in, first served.
+            </p>
+          </div>
+          <div data-reveal>
+            <p class="text-[14px] uppercase tracking-[0.2em] text-mangaroa-gold mb-2 font-bold">Indicative pricing</p>
+            <p class="text-mangaroa-gray text-[15px] leading-[1.7]">
+              Whole lamb from approx. $350-450 (butchered). Side of beef pricing varies by weight. Final price confirmed based on animal weight and your cut preferences.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Form -->
+    <section class="py-14 sm:py-20 bg-mangaroa-cream">
+      <div class="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8">
+        <form id="bulk-order-form" class="space-y-8" data-reveal>
+
+          <!-- Honeypot - hidden from real users, bots fill it and silently 200 -->
+          <div aria-hidden="true" style="position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden;">
+            <label>Website (leave blank)
+              <input type="text" name="website_url" tabindex="-1" autocomplete="off" />
+            </label>
+          </div>
+
+          <!-- Contact Details -->
+          <fieldset class="space-y-4">
+            <legend class="text-xl sm:text-2xl font-semibold text-mangaroa-charcoal mb-3">Your details</legend>
+
+            <div>
+              <label for="name" class="block text-[13px] font-medium text-mangaroa-charcoal mb-1.5 tracking-tight">Name <span class="text-mangaroa-gold">*</span></label>
+              <input type="text" id="name" name="name" required maxlength="120" autocomplete="name"
+                class="form-input"
+                placeholder="Your name" />
+            </div>
+
+            <div class="grid sm:grid-cols-2 gap-4">
+              <div>
+                <label for="email" class="block text-[13px] font-medium text-mangaroa-charcoal mb-1.5 tracking-tight">Email <span class="text-mangaroa-gold">*</span></label>
+                <input type="email" id="email" name="email" required maxlength="200" autocomplete="email"
+                  class="form-input"
+                  placeholder="you@email.com" />
+              </div>
+              <div>
+                <label for="phone" class="block text-[13px] font-medium text-mangaroa-charcoal mb-1.5 tracking-tight">Phone <span class="text-mangaroa-gold">*</span></label>
+                <input type="tel" id="phone" name="phone" required maxlength="50" autocomplete="tel"
+                  class="form-input"
+                  placeholder="021 xxx xxxx" />
+              </div>
+            </div>
+
+            <div>
+              <label for="region" class="block text-[13px] font-medium text-mangaroa-charcoal mb-1.5 tracking-tight">Your region <span class="text-mangaroa-gold">*</span></label>
+              <select id="region" name="region" required class="form-input">
+                <option value="" disabled selected>Select your region</option>
+                <option value="Upper Hutt">Upper Hutt</option>
+                <option value="Lower Hutt">Lower Hutt</option>
+                <option value="Wellington City">Wellington City</option>
+                <option value="Porirua / Kapiti">Porirua / Kapiti</option>
+                <option value="Wairarapa">Wairarapa</option>
+                <option value="Other - Greater Wellington">Other - Greater Wellington</option>
+                <option value="Other - North Island">Other - North Island</option>
+                <option value="Other - South Island">Other - South Island</option>
+              </select>
+            </div>
+          </fieldset>
+
+          <!-- What They Want -->
+          <fieldset class="space-y-5">
+            <legend class="text-xl sm:text-2xl font-semibold text-mangaroa-charcoal mb-3">What are you interested in?</legend>
+
+            <div>
+              <label class="block text-[13px] font-medium text-mangaroa-charcoal mb-2 tracking-tight">Meat type <span class="text-mangaroa-gold">*</span></label>
+              <div class="grid grid-cols-2 gap-3">
+                <label class="check-row cursor-pointer">
+                  <input type="checkbox" name="meat_type" value="Beef" class="check-input" />
+                  <span>Beef</span>
+                </label>
+                <label class="check-row cursor-pointer">
+                  <input type="checkbox" name="meat_type" value="Lamb" class="check-input" />
+                  <span>Lamb</span>
+                </label>
+              </div>
+            </div>
+
+            <div>
+              <label class="block text-[13px] font-medium text-mangaroa-charcoal mb-2 tracking-tight">Quantity</label>
+              <div class="space-y-2">
+                <label class="check-row cursor-pointer">
+                  <input type="radio" name="quantity" value="Whole animal" class="check-input" />
+                  <span>Whole animal</span>
+                </label>
+                <label class="check-row cursor-pointer">
+                  <input type="radio" name="quantity" value="Half animal" class="check-input" />
+                  <span>Half animal</span>
+                </label>
+                <label class="check-row cursor-pointer">
+                  <input type="radio" name="quantity" value="Quarter (beef only)" class="check-input" />
+                  <span>Quarter (beef only)</span>
+                </label>
+                <label class="check-row cursor-pointer">
+                  <input type="radio" name="quantity" value="Custom selection" class="check-input" />
+                  <span>Custom selection of cuts</span>
+                </label>
+                <label class="check-row cursor-pointer">
+                  <input type="radio" name="quantity" value="Not sure yet" class="check-input" />
+                  <span>Not sure yet - help me decide</span>
+                </label>
+              </div>
+            </div>
+
+            <div>
+              <label class="block text-[13px] font-medium text-mangaroa-charcoal mb-2 tracking-tight">Butchering preference</label>
+              <div class="space-y-2">
+                <label class="check-row cursor-pointer">
+                  <input type="radio" name="butchering" value="Butchered - standard cuts" class="check-input" />
+                  <div>
+                    <span class="block text-mangaroa-charcoal font-medium">Butchered into standard cuts</span>
+                    <span class="block text-[13px] text-mangaroa-gray mt-0.5 leading-snug">Steaks, roasts, mince, chops, sausages - prepared by our crew.</span>
+                  </div>
+                </label>
+                <label class="check-row cursor-pointer">
+                  <input type="radio" name="butchering" value="Unbutchered carcass" class="check-input" />
+                  <div>
+                    <span class="block text-mangaroa-charcoal font-medium">Unbutchered carcass</span>
+                    <span class="block text-[13px] text-mangaroa-gray mt-0.5 leading-snug">You collect and butcher yourself or take to your own butcher. Local pickup only.</span>
+                  </div>
+                </label>
+                <label class="check-row cursor-pointer">
+                  <input type="radio" name="butchering" value="Not sure" class="check-input" />
+                  <span>Not sure yet</span>
+                </label>
+              </div>
+            </div>
+
+            <div>
+              <label class="block text-[13px] font-medium text-mangaroa-charcoal mb-2 tracking-tight">Collection preference</label>
+              <div class="space-y-2">
+                <label class="check-row cursor-pointer">
+                  <input type="radio" name="collection" value="Pickup from farm" class="check-input" />
+                  <span>Pickup from the farm shop</span>
+                </label>
+                <label class="check-row cursor-pointer">
+                  <input type="radio" name="collection" value="Shipping" class="check-input" />
+                  <span>Shipping (butchered orders only)</span>
+                </label>
+                <label class="check-row cursor-pointer">
+                  <input type="radio" name="collection" value="Either" class="check-input" />
+                  <span>Either works for me</span>
+                </label>
+              </div>
+            </div>
+          </fieldset>
+
+          <!-- Timing & Research -->
+          <fieldset class="space-y-4">
+            <legend class="text-xl sm:text-2xl font-semibold text-mangaroa-charcoal mb-3">Timing &amp; preferences</legend>
+
+            <div>
+              <label for="frequency" class="block text-[13px] font-medium text-mangaroa-charcoal mb-1.5 tracking-tight">How often would you order?</label>
+              <select id="frequency" name="frequency" class="form-input">
+                <option value="" disabled selected>Select frequency</option>
+                <option value="One-off">One-off order</option>
+                <option value="A few times a year">A few times a year</option>
+                <option value="Monthly">Monthly</option>
+                <option value="Not sure">Not sure yet</option>
+              </select>
+            </div>
+
+            <div>
+              <label for="timing" class="block text-[13px] font-medium text-mangaroa-charcoal mb-1.5 tracking-tight">Preferred timing <span class="text-mangaroa-gray font-normal">(optional)</span></label>
+              <input type="text" id="timing" name="timing" maxlength="200" class="form-input"
+                placeholder="e.g. next month, no rush, before winter" />
+            </div>
+
+            <div>
+              <label for="why" class="block text-[13px] font-medium text-mangaroa-charcoal mb-1.5 tracking-tight">Why are you interested? <span class="text-mangaroa-gray font-normal">(optional)</span></label>
+              <textarea id="why" name="why" rows="3" maxlength="2000" class="form-input"
+                placeholder="What matters most to you about buying this way?"></textarea>
+            </div>
+
+            <div>
+              <label for="notes" class="block text-[13px] font-medium text-mangaroa-charcoal mb-1.5 tracking-tight">Anything else? <span class="text-mangaroa-gray font-normal">(optional)</span></label>
+              <textarea id="notes" name="notes" rows="3" maxlength="2000" class="form-input"
+                placeholder="Specific cuts, quantities, questions..."></textarea>
+            </div>
+          </fieldset>
+
+          <!-- Fine print -->
+          <p class="text-[13px] text-mangaroa-gray leading-[1.6] border-l-2 border-mangaroa-gold/60 pl-4 sm:pl-5 py-1 italic">
+            All orders are subject to availability and processing schedule. Pricing is indicative and confirmed based on animal weight and your preferences. We'll be in touch within a few days.
+          </p>
+
+          <!-- Submit -->
+          <button type="submit" id="submit-btn" class="inline-flex items-center justify-center gap-2 bg-mangaroa-gold hover:bg-mangaroa-gold-dark text-white px-8 py-4 rounded-full text-base font-semibold transition-all shadow-lg shadow-black/10 hover:shadow-xl hover:-translate-y-0.5 w-full sm:w-auto" style="min-height:48px;">
+            Register interest
+            <span aria-hidden="true">→</span>
+          </button>
+
+          <!-- Error -->
+          <div id="error-message" class="hidden p-4 bg-red-50 text-red-800 border border-red-200 rounded-xl text-[15px] leading-[1.6]">
+            Something went wrong submitting the form. Please try again or email us at online@mangaroa.org.
+          </div>
+        </form>
+
+        <!-- Success -->
+        <div id="success-message" class="hidden bg-white border border-mangaroa-gold-light rounded-2xl p-8 sm:p-12 text-center shadow-sm" data-reveal>
+          <p class="text-[11px] uppercase tracking-[0.25em] text-mangaroa-gold mb-4">All received</p>
+          <h2 class="text-2xl sm:text-3xl font-semibold text-mangaroa-charcoal mb-4 leading-tight">Got it - we'll be in touch.</h2>
+          <p class="text-base text-mangaroa-charcoal max-w-md mx-auto leading-[1.7]">
+            We've received your interest. Expect to hear back within a few days to discuss availability, timing, and pricing.
+          </p>
+          <p class="text-sm text-mangaroa-gray mt-6">- Rob &amp; the Mangaroa crew</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Got questions? -->
+    <section class="bg-mangaroa-cream/40 border-y border-mangaroa-gray-light/70">
+      <div class="max-w-2xl mx-auto px-4 sm:px-6 py-14 sm:py-20 text-center">
+        <p class="text-[14px] sm:text-[16px] uppercase tracking-[0.25em] text-mangaroa-gold mb-4 font-medium" data-reveal>Got questions?</p>
+        <h2 class="text-3xl sm:text-5xl font-semibold text-mangaroa-charcoal leading-[1.1] tracking-tight mb-5" data-reveal>Drop us a line.</h2>
+        <p class="text-base sm:text-lg text-mangaroa-gray leading-[1.7] mb-8" data-reveal>
+          Anything you'd rather ask before submitting - timing, custom cuts, freezer fills, shipping - we'd love to hear from you.
+        </p>
+        <a href="mailto:online@mangaroa.org" class="inline-flex items-center gap-2 bg-white border border-mangaroa-gold text-mangaroa-charcoal hover:bg-mangaroa-gold hover:text-white px-7 py-3.5 rounded-full text-base font-semibold transition-all shadow-sm hover:shadow-md hover:-translate-y-0.5" data-reveal style="min-height:48px;">
+          online@mangaroa.org
+          <span aria-hidden="true">↗</span>
+        </a>
+      </div>
+    </section>
+  </main>
+
+  <Footer />
+
+</Layout>
+
+<script>
+  // Scroll-reveal observer
+  const revealEls = document.querySelectorAll<HTMLElement>('[data-reveal]');
+  if ('IntersectionObserver' in window) {
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('is-visible');
+          io.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
+    revealEls.forEach(el => io.observe(el));
+  } else {
+    revealEls.forEach(el => el.classList.add('is-visible'));
+  }
+
+  // Form submit
+  const form = document.getElementById('bulk-order-form') as HTMLFormElement;
+  const submitBtn = document.getElementById('submit-btn');
+  const successMsg = document.getElementById('success-message');
+  const errorMsg = document.getElementById('error-message');
+
+  form?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    errorMsg?.classList.add('hidden');
+
+    const formData = new FormData(form);
+
+    // Honeypot - silently 200 if filled (spam bot)
+    if ((formData.get('website_url') as string)?.trim()) {
+      form.classList.add('hidden');
+      successMsg?.classList.remove('hidden');
+      return;
+    }
+
+    const meatTypes = formData.getAll('meat_type');
+    const data = {
+      name: formData.get('name'),
+      email: formData.get('email'),
+      phone: formData.get('phone') || '',
+      region: formData.get('region') || '',
+      meatType: meatTypes.join(', '),
+      quantity: formData.get('quantity') || '',
+      butchering: formData.get('butchering') || '',
+      collection: formData.get('collection') || '',
+      frequency: formData.get('frequency') || '',
+      timing: formData.get('timing') || '',
+      why: formData.get('why') || '',
+      notes: formData.get('notes') || '',
+    };
+
+    if (!data.name || !data.email || !data.phone) return;
+    if (meatTypes.length === 0) {
+      errorMsg!.textContent = 'Please select at least one meat type (beef or lamb).';
+      errorMsg?.classList.remove('hidden');
+      return;
+    }
+
+    submitBtn!.textContent = 'Submitting…';
+    (submitBtn as HTMLButtonElement).disabled = true;
+
+    try {
+      const res = await fetch('/api/submit-bulk-order', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data),
+      });
+
+      if (!res.ok) throw new Error('Submission failed');
+
+      form.classList.add('hidden');
+      successMsg?.classList.remove('hidden');
+    } catch {
+      errorMsg?.classList.remove('hidden');
+      submitBtn!.textContent = 'Register interest';
+      (submitBtn as HTMLButtonElement).disabled = false;
+    }
+  });
+</script>

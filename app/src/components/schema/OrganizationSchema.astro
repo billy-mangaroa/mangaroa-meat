@@ -1,0 +1,34 @@
+---
+/**
+ * Organization schema — renders on every page via Layout.astro.
+ */
+const schema = {
+  '@context': 'https://schema.org',
+  '@type': 'Organization',
+  name: 'Mangaroa Farms',
+  url: 'https://meat.mangaroa.org',
+  logo: 'https://meat.mangaroa.org/logo.png',
+  sameAs: [
+    'https://mangaroa.org',
+    'https://store.mangaroa.org',
+    'https://events.mangaroa.org',
+    'https://www.instagram.com/mangaroafarms',
+    'https://www.facebook.com/mangaroafarms',
+  ],
+  address: {
+    '@type': 'PostalAddress',
+    streetAddress: '98 Whitemans Valley Road',
+    addressLocality: 'Upper Hutt',
+    addressRegion: 'Wellington',
+    postalCode: '5371',
+    addressCountry: 'NZ',
+  },
+  contactPoint: {
+    '@type': 'ContactPoint',
+    email: 'online@mangaroa.org',
+    contactType: 'customer service',
+  },
+};
+---
+
+<script type="application/ld+json" set:html={JSON.stringify(schema)} />

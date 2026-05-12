@@ -1,0 +1,34 @@
+---
+// Static fallback for /discount/:code requests.
+//
+// In production, vercel.json rewrites /discount/:code → /?discount=:code at the
+// edge, so this Astro page never renders. It only exists so Astro's static
+// build is happy with the bracket-route filename. getStaticPaths returns an
+// empty array — no pages emitted, the rewrite handles everything.
+//
+// If a request ever does reach this page (e.g. local `astro dev` without the
+// rewrite), the meta-refresh + JS below mirrors the rewrite behaviour.
+
+export function getStaticPaths() {
+  return [];
+}
+---
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="robots" content="noindex" />
+    <title>Applying discount — Mangaroa Farms</title>
+    <meta http-equiv="refresh" content="0; url=/" />
+  </head>
+  <body>
+    <p>Applying discount… <a href="/">continue</a></p>
+    <script is:inline>
+      (function () {
+        var m = window.location.pathname.match(/^\/discount\/([A-Za-z0-9_-]{1,64})\/?$/);
+        var target = m ? '/?discount=' + encodeURIComponent(m[1]) : '/';
+        window.location.replace(target);
+      })();
+    </script>
+  </body>
+</html>

@@ -1,0 +1,43 @@
+---
+/**
+ * Product schema — renders JSON-LD for an array of meat products.
+ * Uses data from Shopify Storefront API (getMeatProducts).
+ */
+import type { MeatProduct } from '../../lib/shopify';
+
+interface Props {
+  products: MeatProduct[];
+}
+
+const { products } = Astro.props;
+
+const schemas = products.map((p) => ({
+  '@context': 'https://schema.org',
+  '@type': 'Product',
+  name: p.title,
+  description: p.description,
+  image: p.image || undefined,
+  url: p.shopifyUrl,
+  brand: {
+    '@type': 'Brand',
+    name: 'Mangaroa Farms',
+  },
+  offers: {
+    '@type': 'Offer',
+    price: p.price.toFixed(2),
+    priceCurrency: p.currency,
+    availability: p.availableForSale
+      ? 'https://schema.org/InStock'
+      : 'https://schema.org/OutOfStock',
+    url: p.shopifyUrl,
+    seller: {
+      '@type': 'Organization',
+      name: 'Mangaroa Farms',
+    },
+  },
+}));
+---
+
+{schemas.map((schema) => (
+  <script type="application/ld+json" set:html={JSON.stringify(schema)} />
+))}

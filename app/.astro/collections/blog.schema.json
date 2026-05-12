@@ -1,0 +1,72 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "title": {
+      "type": "string",
+      "minLength": 3
+    },
+    "description": {
+      "type": "string",
+      "minLength": 20,
+      "maxLength": 280
+    },
+    "pubDate": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "updatedDate": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "hero": {
+      "type": "string"
+    },
+    "heroAlt": {
+      "type": "string"
+    },
+    "tags": {
+      "default": [],
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "pillar": {
+      "type": "string",
+      "enum": [
+        "educational",
+        "brand-story",
+        "comparison"
+      ]
+    },
+    "status": {
+      "default": "hidden",
+      "type": "string",
+      "enum": [
+        "linked",
+        "hidden"
+      ]
+    },
+    "draft": {
+      "default": false,
+      "type": "boolean"
+    },
+    "targetKeyword": {
+      "type": "string"
+    },
+    "author": {
+      "default": "Mangaroa Farms",
+      "type": "string"
+    },
+    "$schema": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "title",
+    "description",
+    "pubDate",
+    "pillar"
+  ]
+}

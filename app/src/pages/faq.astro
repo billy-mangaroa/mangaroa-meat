@@ -1,0 +1,107 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import FAQPageSchema from '../components/schema/FAQPageSchema.astro';
+import BreadcrumbSchema from '../components/schema/BreadcrumbSchema.astro';
+
+const faqs = [
+  {
+    q: 'What does "home-processed" mean?',
+    a: 'Our beef and lamb are raised right here on Mangaroa\'s regenerative pastures. After professional slaughter, the carcasses come back to us and our local crew handles all the butchery and processing. Shorter chain, more care, fresher meat.'
+  },
+  {
+    q: 'What cuts are available?',
+    a: 'Standard retail cuts - steaks, mince, sausages, chops, roasts, and more. The range varies week to week depending on what has been processed. Drop in to the farm shop to see what is in the cabinet, or check our online shop.'
+  },
+  {
+    q: 'Is the meat fresh or frozen?',
+    a: 'We offer both. Fresh cuts are available in-store when they come through from processing. We also have frozen options for convenience and to reduce waste. Ask in the shop or check the product listings online.'
+  },
+  {
+    q: 'How do I order online?',
+    a: 'Visit our <a href="/order" class="text-mangaroa-gold hover:text-mangaroa-gold-dark underline">online shop</a> to browse what is available. Select your cuts, place your order, and pick up from the farm shop at a time that works for you.'
+  },
+  {
+    q: 'Can I order a whole lamb or side of beef?',
+    a: 'Yes. We take expressions of interest for whole animals, half animals, and custom bulk orders. You can choose butchered into standard cuts or collect the carcass to butcher yourself. Whole lamb starts from approximately $350-450 butchered. Side of beef pricing varies by weight. <a href="/bulk" class="text-mangaroa-gold hover:text-mangaroa-gold-dark underline">Register your interest</a> and we will be in touch to discuss timing and availability.'
+  },
+  {
+    q: 'When is fresh meat available in the shop?',
+    a: 'Fresh meat is available during regular farm shop opening hours. The selection changes week to week based on the processing schedule. Follow us on social media or sign up to our email list to stay in the loop.'
+  },
+  {
+    q: 'What animals do you have?',
+    a: 'We currently offer beef and lamb, both raised on our regenerative pastures in Mangaroa Valley.'
+  },
+  {
+    q: 'What are your farming practices?',
+    a: 'Mangaroa Farms practises regenerative agriculture - growing food in harmony with nature. We use virtual fencing to manage grazing, cover crops to build soil, and systems that produce more with fewer inputs. Our beef and lamb are pasture-raised on open paddocks with plenty of space and good feed. The same people who manage the land also handle the butchery.'
+  },
+  {
+    q: 'Can I get meat shipped to me?',
+    a: 'We can ship butchered orders within New Zealand. Unbutchered carcasses are local pickup only. Let us know your preference on the <a href="/bulk" class="text-mangaroa-gold hover:text-mangaroa-gold-dark underline">bulk order form</a> and we will work out the best option.'
+  },
+  {
+    q: 'Where exactly does the meat come from?',
+    a: 'Every cut comes from animals raised right here on Mangaroa Farms, 29 Mangaroa Valley Road, Upper Hutt. Rob manages the farm and the butchery - the same person who raises the animals prepares the cuts. You can visit the farm, see the paddocks, and meet the team.'
+  },
+];
+---
+
+<Layout title="FAQ - Fresh Meat - Mangaroa Farms" description="Answers to common questions about Mangaroa Farms regenerative meat — cuts, ordering, bulk pricing, shipping, storage, and farm practices.">
+
+  <Fragment slot="head">
+    <FAQPageSchema faqs={faqs} />
+    <BreadcrumbSchema items={[{ name: 'FAQ', href: '/faq' }]} />
+  </Fragment>
+
+  <main>
+    <!-- Page Header -->
+    <section class="bg-mangaroa-charcoal text-white relative overflow-hidden isolate pt-32 sm:pt-40 pb-12 sm:pb-16">
+      <Header />
+      <img src="/meat/regen-1.jpg" alt="" aria-hidden="true" class="absolute inset-0 w-full h-full object-cover opacity-55" loading="lazy" />
+      <div class="absolute inset-0 bg-gradient-to-b from-mangaroa-charcoal/55 via-mangaroa-charcoal/65 to-mangaroa-charcoal/80"></div>
+      <div class="absolute inset-0 bg-[radial-gradient(circle_at_75%_30%,rgba(201,162,39,0.18),transparent_55%)] mix-blend-overlay"></div>
+      <div class="relative max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        <h1 class="text-3xl sm:text-4xl lg:text-5xl font-semibold mb-3" style="font-family: var(--font-serif);">
+          Frequently asked questions
+        </h1>
+        <p class="text-white/80 text-base sm:text-lg max-w-2xl">
+          Everything you need to know about our locally processed meat.
+        </p>
+      </div>
+    </section>
+
+    <!-- FAQs -->
+    <section class="py-12 sm:py-16">
+      <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="space-y-4">
+          {faqs.map((faq) => (
+            <details class="group bg-white rounded-xl p-5 sm:p-6 shadow-sm">
+              <summary class="flex items-center justify-between cursor-pointer text-base sm:text-lg font-medium text-mangaroa-charcoal">
+                {faq.q}
+                <svg class="w-5 h-5 text-mangaroa-gray transition-transform group-open:rotate-180 shrink-0 ml-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                </svg>
+              </summary>
+              <p class="text-mangaroa-gray mt-3 leading-relaxed" set:html={faq.a} />
+            </details>
+          ))}
+        </div>
+
+        <div class="mt-12 text-center">
+          <p class="text-mangaroa-gray mb-4">
+            Have another question? Get in touch.
+          </p>
+          <a href="https://mangaroa.org/contact" class="btn-secondary">
+            Contact us
+          </a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <Footer />
+
+</Layout>

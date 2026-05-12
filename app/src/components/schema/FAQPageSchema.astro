@@ -1,0 +1,28 @@
+---
+/**
+ * FAQPage schema — renders JSON-LD from an array of { q, a } pairs.
+ * Strips HTML tags from answers for the schema (Google wants plain text).
+ */
+interface Props {
+  faqs: { q: string; a: string }[];
+}
+
+const { faqs } = Astro.props;
+
+const stripHtml = (html: string) => html.replace(/<[^>]*>/g, '');
+
+const schema = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: faqs.map(({ q, a }) => ({
+    '@type': 'Question',
+    name: q,
+    acceptedAnswer: {
+      '@type': 'Answer',
+      text: stripHtml(a),
+    },
+  })),
+};
+---
+
+<script type="application/ld+json" set:html={JSON.stringify(schema)} />

@@ -1,0 +1,7 @@
+{
+  "buildCommand": "cd app && npm install && npm run build && cp -r .vercel/output ../.vercel/output",
+  "installCommand": "echo 'skipping root install'",
+  "rewrites": [
+    { "source": "/discount/:code", "destination": "/?discount=:code" }
+  ]
+}

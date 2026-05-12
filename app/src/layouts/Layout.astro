@@ -1,0 +1,164 @@
+---
+import '../styles/global.css';
+import Analytics from '@vercel/analytics/astro';
+import SpeedInsights from '@vercel/speed-insights/astro';
+import OrganizationSchema from '../components/schema/OrganizationSchema.astro';
+
+interface Props {
+  title: string;
+  description?: string;
+  ogImage?: string;
+  noindex?: boolean;
+}
+
+const {
+  title,
+  description = 'Home-grown, home-processed beef and lamb from Mangaroa Farms. Regenerative pastures, local crew, fresh in the shop or order for pickup.',
+  ogImage = '/images/og-image-meat.jpg',
+  noindex = false,
+} = Astro.props;
+
+const canonicalUrl = new URL(Astro.url.pathname, Astro.site ?? 'https://meat.mangaroa.org').toString();
+const ogImageUrl = new URL(ogImage, Astro.site ?? 'https://meat.mangaroa.org').toString();
+
+const umamiWebsiteId = import.meta.env.UMAMI_WEBSITE_ID;
+const umamiScriptUrl = import.meta.env.UMAMI_SCRIPT_URL || 'https://cloud.umami.is/script.js';
+
+const gscVerification = import.meta.env.GOOGLE_SITE_VERIFICATION;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonicalUrl} />
+    {noindex && <meta name="robots" content="noindex" />}
+    {gscVerification && <meta name="google-site-verification" content={gscVerification} />}
+    <link rel="icon" type="image/png" href="/logo.png" />
+    <!-- Mangaroa Farms brand kit (Adobe Fonts / Typekit) — deferred so it doesn't compete with hero LCP -->
+    <link rel="preconnect" href="https://use.typekit.net" crossorigin />
+    <link rel="preconnect" href="https://p.typekit.net" crossorigin />
+    <link rel="dns-prefetch" href="https://p.typekit.net" />
+    <link rel="stylesheet" href="https://use.typekit.net/gdd7waj.css" media="print" onload="this.media='all'" />
+    <noscript><link rel="stylesheet" href="https://use.typekit.net/gdd7waj.css" /></noscript>
+    <!-- Preload responsive hero image for LCP — mobile gets the small webp -->
+    <link rel="preload" as="image" type="image/webp" href="/meat/hero-800.webp" media="(max-width: 768px)" fetchpriority="high" />
+    <link rel="preload" as="image" type="image/webp" href="/meat/hero-1600.webp" media="(min-width: 769px)" fetchpriority="high" />
+    <title>{title}</title>
+
+    <!-- Open Graph -->
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content={canonicalUrl} />
+    <meta property="og:site_name" content="Mangaroa Farms" />
+    <meta property="og:image" content={ogImageUrl} />
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImageUrl} />
+
+    <!-- Analytics (Umami) -->
+    {umamiWebsiteId && (
+      <script defer src={umamiScriptUrl} data-website-id={umamiWebsiteId} />
+    )}
+    <OrganizationSchema />
+    <slot name="head" />
+  </head>
+  <body class="min-h-screen flex flex-col">
+    <slot />
+    <Analytics />
+    <SpeedInsights />
+
+    <!--
+      Discount-link auto-apply.
+      Reads ?discount=CODE on any URL (or /discount/CODE pathname) and forwards
+      it to all outbound Shopify links so the code applies at checkout without
+      the customer having to type it. Code is kebab-case A-Z 0-9 dash, max 64.
+    -->
+    <script is:inline>
+      (function () {
+        var STORAGE_KEY = 'mangaroa_discount';
+        var SHOPIFY_HOSTS = ['store.mangaroa.org', 'mangaroa.myshopify.com'];
+
+        function isValidCode(c) {
+          return typeof c === 'string' && /^[A-Za-z0-9_-]{1,64}$/.test(c);
+        }
+
+        function readIncomingCode() {
+          try {
+            var url = new URL(window.location.href);
+            var q = url.searchParams.get('discount');
+            if (isValidCode(q)) return q;
+            var m = url.pathname.match(/^\/discount\/([^/?#]+)\/?$/);
+            if (m && isValidCode(m[1])) return m[1];
+          } catch (_) {}
+          return null;
+        }
+
+        function persist(code) {
+          try { sessionStorage.setItem(STORAGE_KEY, code); } catch (_) {}
+        }
+
+        function loadCode() {
+          try {
+            var s = sessionStorage.getItem(STORAGE_KEY);
+            return isValidCode(s) ? s : null;
+          } catch (_) { return null; }
+        }
+
+        function isShopifyHref(href) {
+          if (!href) return false;
+          try {
+            var u = new URL(href, window.location.href);
+            return SHOPIFY_HOSTS.indexOf(u.hostname) !== -1;
+          } catch (_) { return false; }
+        }
+
+        function decorateAnchor(a, code) {
+          var href = a.getAttribute('href');
+          if (!isShopifyHref(href)) return;
+          try {
+            var u = new URL(href, window.location.href);
+            var existing = u.searchParams.get('discount');
+            if (existing) return;
+            u.searchParams.set('discount', code);
+            a.setAttribute('href', u.toString());
+          } catch (_) {}
+        }
+
+        function decorateAll(code) {
+          var anchors = document.querySelectorAll('a[href]');
+          for (var i = 0; i < anchors.length; i++) decorateAnchor(anchors[i], code);
+        }
+
+        var incoming = readIncomingCode();
+        if (incoming) persist(incoming);
+
+        var code = loadCode();
+        if (!code) return;
+
+        if (document.readyState === 'loading') {
+          document.addEventListener('DOMContentLoaded', function () { decorateAll(code); });
+        } else {
+          decorateAll(code);
+        }
+
+        // Catch links that get rendered after first paint (filtered grids,
+        // client routing, hydration etc.) without needing a full MutationObserver.
+        document.addEventListener('astro:page-load', function () { decorateAll(code); });
+        document.addEventListener('click', function (e) {
+          var t = e.target;
+          while (t && t !== document.body) {
+            if (t.tagName === 'A') { decorateAnchor(t, code); break; }
+            t = t.parentNode;
+          }
+        }, true);
+      })();
+    </script>
+  </body>
+</html>
